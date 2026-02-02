@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TEDxSRKR | Igniting Minds, Inspiring Change</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ted-red': '#EB0028',
+                        'dark-charcoal': '#111111',
+                        border: "hsl(0 0% 14.9%)",
+                        input: "hsl(0 0% 14.9%)",
+                        ring: "hsl(0 0% 83.1%)",
+                        background: "hsl(0 0% 3.9%)",
+                        foreground: "hsl(0 0% 98%)",
+                        primary: {
+                            DEFAULT: "hsl(0 0% 98%)",
+                            foreground: "hsl(0 0% 9%)",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(0 0% 14.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(0 62.8% 30.6%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(0 0% 14.9%)",
+                            foreground: "hsl(0 0% 63.9%)",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(0 0% 14.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        popover: {
+                            DEFAULT: "hsl(0 0% 3.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        card: {
+                            DEFAULT: "hsl(0 0% 3.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Sora', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@^9.5.0",
+    "three": "https://esm.sh/three@^0.182.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "framer-motion": "https://esm.sh/framer-motion@^12.30.0",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@^10.7.7",
+    "motion": "https://esm.sh/motion@10.18.0",
+    "clsx": "https://esm.sh/clsx@2.1.1",
+    "tailwind-merge": "https://esm.sh/tailwind-merge@2.4.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-black text-white">
+<div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
