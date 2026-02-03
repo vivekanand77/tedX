@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface TimeLeft {
@@ -11,7 +11,7 @@ interface TimeLeft {
 const Countdown: React.FC = () => {
     // Set your event date here (YYYY-MM-DD)
     const eventDate = new Date('2026-03-15T09:00:00').getTime();
-    const [hasAnimated, setHasAnimated] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const calculateTimeLeft = (): TimeLeft => {
         const now = new Date().getTime();
@@ -32,6 +32,9 @@ const Countdown: React.FC = () => {
     const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
 
     useEffect(() => {
+        // Prevent flicker - mark as loaded immediately
+        setIsLoaded(true);
+
         const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
@@ -41,41 +44,50 @@ const Countdown: React.FC = () => {
 
     const TimeUnit: React.FC<{ value: number; label: string; index: number }> = React.memo(({ value, label, index }) => {
         const percentage = label === 'Days' ? (value / 365) * 100 : (value / (label === 'Hours' ? 24 : 60)) * 100;
-        const circumference = 2 * Math.PI * 70;
+        const circumference = 2 * Math.PI * 58;
         const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
         return (
             <div className="flex flex-col items-center">
-                <div className="relative w-32 h-32 md:w-40 md:h-40">
-                    {/* Background circle */}
-                    <svg className="w-full h-full transform -rotate-90">
+                <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40">
+                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 140 140">
+                        {/* Background track circle - always visible */}
                         <circle
-                            cx="50%"
-                            cy="50%"
-                            r="70"
-                            stroke="rgba(255, 255, 255, 0.1)"
-                            strokeWidth="8"
+                            cx="70"
+                            cy="70"
+                            r="58"
+                            stroke="rgba(255, 255, 255, 0.08)"
+                            strokeWidth="6"
+                            fill="none"
+                        />
+                        {/* Secondary background for better definition */}
+                        <circle
+                            cx="70"
+                            cy="70"
+                            r="58"
+                            stroke="rgba(230, 43, 30, 0.15)"
+                            strokeWidth="6"
                             fill="none"
                         />
                         {/* Progress circle */}
                         <circle
-                            cx="50%"
-                            cy="50%"
-                            r="70"
-                            stroke="url(#gradient)"
-                            strokeWidth="8"
+                            cx="70"
+                            cy="70"
+                            r="58"
+                            stroke="url(#countdownGradient)"
+                            strokeWidth="6"
                             fill="none"
                             strokeLinecap="round"
                             strokeDasharray={circumference}
                             strokeDashoffset={strokeDashoffset}
                             style={{
-                                filter: 'drop-shadow(0 0 10px rgba(235, 0, 40, 0.5))',
+                                filter: 'drop-shadow(0 0 12px rgba(230, 43, 30, 0.6))',
                                 transition: 'stroke-dashoffset 0.5s ease-out'
                             }}
                         />
                         <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#eb0028" />
+                            <linearGradient id="countdownGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#E62B1E" />
                                 <stop offset="100%" stopColor="#ff4d6d" />
                             </linearGradient>
                         </defs>
@@ -84,9 +96,11 @@ const Countdown: React.FC = () => {
                     {/* Number display */}
                     <div className="absolute inset-0 flex items-center justify-center">
                         <span
-                            className="text-4xl md:text-5xl font-bold text-white font-heading"
+                            className="text-3xl sm:text-4xl md:text-5xl font-bold text-white"
                             style={{
-                                textShadow: '0 0 20px rgba(235, 0, 40, 0.5)'
+                                textShadow: '0 0 20px rgba(230, 43, 30, 0.4)',
+                                opacity: isLoaded ? 1 : 0,
+                                transition: 'opacity 0.3s ease'
                             }}
                         >
                             {String(value).padStart(2, '0')}
@@ -95,7 +109,7 @@ const Countdown: React.FC = () => {
                 </div>
 
                 {/* Label */}
-                <p className="mt-4 text-sm md:text-base font-semibold text-gray-400 uppercase tracking-wider">
+                <p className="mt-3 md:mt-4 text-xs sm:text-sm md:text-base font-semibold text-gray-400 uppercase tracking-[0.15em]">
                     {label}
                 </p>
             </div>
@@ -103,26 +117,31 @@ const Countdown: React.FC = () => {
     });
 
     return (
-        <section className="py-20 bg-black relative overflow-hidden">
+        <section className="py-16 md:py-24 bg-[#0A0A0A] relative overflow-hidden">
             {/* Background glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-b from-ted-red/5 via-transparent to-transparent"></div>
+            <div
+                className="absolute inset-0"
+                style={{
+                    background: 'radial-gradient(ellipse at center, rgba(230, 43, 30, 0.08) 0%, transparent 60%)'
+                }}
+            />
 
-            <div className="container mx-auto px-6 relative z-10">
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
+                    className="text-center mb-12 md:mb-16"
                 >
-                    <h2 className="font-heading text-5xl md:text-7xl font-bold text-white mb-4 uppercase tracking-tight">
-                        Count<span className="text-ted-red">down</span>
+                    <h2 className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 uppercase tracking-tight">
+                        Count<span className="text-[#E62B1E]">down</span>
                     </h2>
-                    <div className="w-24 h-1 bg-ted-red mx-auto"></div>
+                    <div className="w-20 md:w-24 h-1 bg-[#E62B1E] mx-auto rounded-full" />
                 </motion.div>
 
                 <motion.div
-                    className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 max-w-5xl mx-auto"
+                    className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 lg:gap-12 max-w-4xl mx-auto"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}

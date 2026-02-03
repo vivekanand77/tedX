@@ -4,7 +4,7 @@ import Speakers from '../components/Speakers';
 
 const SpeakersPage: React.FC = () => {
     return (
-        <div className="bg-black min-h-screen pt-24">
+        <div className="bg-[#0A0A0A] min-h-screen pt-24">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

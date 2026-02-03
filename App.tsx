@@ -7,6 +7,7 @@ import SpeakersPage from './pages/SpeakersPage';
 import SchedulePage from './pages/SchedulePage';
 import TeamPage from './pages/TeamPage';
 import RegisterPage from './pages/RegisterPage';
+import NotFound from './pages/NotFound';
 
 const App: React.FC = () => {
     return (
@@ -19,8 +20,11 @@ const App: React.FC = () => {
                 <Route path="team" element={<TeamPage />} />
                 <Route path="register" element={<RegisterPage />} />
             </Route>
+            {/* Catch-all 404 route */}
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 };
 
 export default App;
+

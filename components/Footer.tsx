@@ -1,35 +1,46 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Instagram, Twitter, Linkedin, Github } from 'lucide-react';
+import { Instagram, Twitter, Linkedin, Youtube } from 'lucide-react';
 
 const Footer: React.FC = () => {
+    const socialLinks = [
+        { icon: Instagram, href: '#', label: 'Instagram' },
+        { icon: Twitter, href: '#', label: 'Twitter' },
+        { icon: Linkedin, href: '#', label: 'LinkedIn' },
+        { icon: Youtube, href: '#', label: 'YouTube' }
+    ];
+
     return (
-        <footer className="bg-black border-t border-gray-800 py-12">
-            <div className="container mx-auto px-6 text-center">
-                <div className="flex justify-center space-x-6 mb-8">
-                    {[
-                        { icon: Instagram, href: '#' },
-                        { icon: Twitter, href: '#' },
-                        { icon: Linkedin, href: '#' },
-                        { icon: Github, href: '#' }
-                    ].map((social, i) => (
+        <footer className="bg-[#0A0A0A] border-t border-[#1a1a1a] py-12 md:py-16">
+            <div className="container mx-auto px-4 md:px-6 text-center">
+                {/* Social Icons - Fixed: Larger with containers */}
+                <div className="flex justify-center gap-4 md:gap-6 mb-8">
+                    {socialLinks.map((social, i) => (
                         <motion.a
                             key={i}
                             href={social.href}
-                            className="text-gray-500 hover:text-ted-red transition-colors duration-300"
-                            whileHover={{ scale: 1.2, y: -2 }}
+                            aria-label={social.label}
+                            className="flex items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-gray-400 hover:text-[#E62B1E] hover:border-[#E62B1E]/50 hover:bg-[#E62B1E]/10 transition-all duration-300"
+                            whileHover={{ scale: 1.1, y: -3 }}
+                            whileTap={{ scale: 0.95 }}
                         >
                             <social.icon size={20} />
                         </motion.a>
                     ))}
                 </div>
 
-                <p className="text-gray-400 font-medium">&copy; {new Date().getFullYear()} <span className="text-white font-bold tracking-tight">TEDx<span className="text-ted-red">SRKR</span></span></p>
-                <p className="text-gray-500 text-sm mt-2 max-w-xl mx-auto leading-relaxed">
-                    This independent TEDx event is operated under license from TED.
+                {/* Logo and Copyright */}
+                <p className="text-gray-300 font-medium text-base">
+                    © {new Date().getFullYear()}{' '}
+                    <span className="text-white font-bold tracking-tight">
+                        TED<span className="text-[#E62B1E]">x</span>SRKR
+                    </span>
                 </p>
 
+                {/* License Text - Fixed: Smaller font */}
+                <p className="text-gray-500 text-xs md:text-sm mt-3 max-w-lg mx-auto leading-relaxed">
+                    This independent TEDx event is operated under license from TED.
+                </p>
             </div>
         </footer>
     );

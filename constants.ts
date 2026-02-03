@@ -1,6 +1,6 @@
 
-import { Speaker, ScheduleItem, TeamMember, Stat } from './types';
-import { Mic, Coffee, Award, Users, Handshake, Milestone, Clock, Calendar } from 'lucide-react';
+import { Speaker, ScheduleItem, TeamCategory, Stat } from './types';
+import { Mic, Coffee, Award, Users, Milestone, Calendar } from 'lucide-react';
 
 export const SPEAKERS: Speaker[] = [
     { name: 'Dr. Priya Sharma', title: 'AI Research Scientist', topic: '"The Future of AI in Healthcare"', image: 'https://picsum.photos/seed/priya/400/400' },
@@ -21,43 +21,210 @@ export const SCHEDULE: ScheduleItem[] = [
     { time: '04:00 PM', title: 'Closing Ceremony & Awards', description: 'Concluding remarks and acknowledgements.', icon: Award },
 ];
 
-
-export const TEAM: TeamMember[] = [
-    // Leadership
-    { name: 'Preethi Avula', role: 'Organizer & Head', image: 'https://picsum.photos/seed/preethi/200/200' },
-    { name: 'Ashok Reddy', role: 'Mentor', image: 'https://picsum.photos/seed/ashok/200/200' },
-
-    // Technical Team
-    { name: 'Akash', role: 'Web Development Head', image: 'https://picsum.photos/seed/akash/200/200' },
-    { name: 'Vivekananda', role: 'Technical Co-Lead', image: 'https://picsum.photos/seed/saikrishna/200/200' },
-    { name: 'Aditya', role: 'Tech Support', image: 'https://picsum.photos/seed/harsha/200/200' },
-    { name: 'Shaik saidani', role: 'Tech Support', image: 'https://picsum.photos/seed/harsha/200/200' },
-    { name: 'Gayathri Devi', role: 'Tech Support', image: 'https://picsum.photos/seed/harsha/200/200' },
-
-    // Content & Curation
-    { name: 'Divya Sree', role: 'Content Head', image: 'https://picsum.photos/seed/divya/200/200' },
-    { name: 'Ravi Teja', role: 'Curation Lead', image: 'https://picsum.photos/seed/ravi/200/200' },
-    { name: 'Lakshmi Prasanna', role: 'Content Writer', image: 'https://picsum.photos/seed/lakshmi/200/200' },
-
-    // Marketing & PR
-    { name: 'Priya Singh', role: 'Marketing Head', image: 'https://picsum.photos/seed/priyasingh/200/200' },
-    { name: 'Karthik Reddy', role: 'Social Media Manager', image: 'https://picsum.photos/seed/karthik/200/200' },
-    { name: 'Sneha Patel', role: 'PR Coordinator', image: 'https://picsum.photos/seed/sneha/200/200' },
-
-    // Design & Creative
-    { name: 'Aditya Rao', role: 'Design Head', image: 'https://picsum.photos/seed/aditya/200/200' },
-    { name: 'Meghana Reddy', role: 'Graphic Designer', image: 'https://picsum.photos/seed/meghana/200/200' },
-    { name: 'Rohit Kumar', role: 'Video Editor', image: 'https://picsum.photos/seed/rohit/200/200' },
-
-    // Operations & Logistics
-    { name: 'Venkat Sai', role: 'Operations Head', image: 'https://picsum.photos/seed/venkat/200/200' },
-    { name: 'Anjali Sharma', role: 'Logistics Coordinator', image: 'https://picsum.photos/seed/anjali/200/200' },
-    { name: 'Naveen Kumar', role: 'Venue Manager', image: 'https://picsum.photos/seed/naveen/200/200' },
-
-    // Sponsorship & Finance
-    { name: 'Suresh Babu', role: 'Sponsorship Head', image: 'https://picsum.photos/seed/suresh/200/200' },
-    { name: 'Kavya Reddy', role: 'Finance Manager', image: 'https://picsum.photos/seed/kavya/200/200' },
-    { name: 'Manoj Krishna', role: 'Partnership Lead', image: 'https://picsum.photos/seed/manoj/200/200' },
+// Team organized by categories with comprehensive member data
+export const TEAM_CATEGORIES: TeamCategory[] = [
+    {
+        id: 'organizing',
+        name: 'Organizing Committee',
+        icon: '👥',
+        description: 'Leading TEDxSRKR with vision and dedication to bring ideas worth spreading.',
+        featured: true,
+        members: [
+            {
+                id: 'preethi',
+                name: 'A. Preethi',
+                role: 'Organizer',
+                image: 'https://picsum.photos/seed/preethi/400/400',
+                email: 'preethi@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                isLead: true,
+                bio: 'Passionate about creating platforms for transformative ideas.',
+                responsibilities: ['Overall event coordination', 'Strategic planning', 'Stakeholder management'],
+                quote: 'Ideas have the power to change the world, one stage at a time.'
+            },
+            {
+                id: 'gayatri',
+                name: 'Y. Gayatri Devi',
+                role: 'Co-Organizer',
+                image: 'https://picsum.photos/seed/gayatri/400/400',
+                email: 'gayatri@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                isLead: true,
+                bio: 'Dedicated to excellence in event management and team coordination.',
+                responsibilities: ['Operations management', 'Team coordination', 'Quality assurance'],
+                quote: 'Every great achievement begins with the courage to try.'
+            }
+        ]
+    },
+    {
+        id: 'curation',
+        name: 'Content & Curation',
+        icon: '📝',
+        description: 'Crafting narratives that inspire. Our curation team selects speakers and shapes the ideas that will grace the TEDxSRKR stage.',
+        featured: false,
+        members: [
+            {
+                id: 'giresh',
+                name: 'Y. Giresh',
+                role: 'Curator',
+                image: 'https://picsum.photos/seed/giresh/400/400',
+                email: 'giresh@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                isLead: true,
+                bio: 'Passionate about storytelling and identifying ideas worth spreading.',
+                responsibilities: ['Speaker selection', 'Content development', 'Talk curation'],
+                quote: 'The right idea at the right time can spark a movement.'
+            }
+        ]
+    },
+    {
+        id: 'tech',
+        name: 'Tech & Web Development',
+        icon: '💻',
+        description: 'Building the digital experience. Our tech team ensures seamless online engagement and platform functionality.',
+        featured: false,
+        members: [
+            {
+                id: 'vivekananda',
+                name: 'Ch. Vivekananda',
+                role: 'Lead Developer',
+                image: 'https://picsum.photos/seed/vivekananda/400/400',
+                email: 'vivekananda@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                isLead: true,
+                bio: 'Frontend specialist with expertise in React and modern web technologies.',
+                responsibilities: ['Frontend architecture', 'UI implementation', 'Team leadership'],
+                quote: 'Code is poetry, and every line tells a story.'
+            },
+            {
+                id: 'saidani',
+                name: 'Sk. Saidani',
+                role: 'Backend Developer',
+                image: 'https://picsum.photos/seed/saidani/400/400',
+                email: 'saidani@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                responsibilities: ['Server-side development', 'Database management', 'API integration']
+            },
+            {
+                id: 'adithya',
+                name: 'T. Adithya',
+                role: 'Full Stack Developer',
+                image: 'https://picsum.photos/seed/adithya/400/400',
+                email: 'adithya@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                responsibilities: ['End-to-end development', 'System integration', 'Performance optimization']
+            },
+            {
+                id: 'akash',
+                name: 'V. Akash',
+                role: 'UI/UX Developer',
+                image: 'https://picsum.photos/seed/akash/400/400',
+                email: 'akash@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                responsibilities: ['UI/UX design', 'Responsive implementation', 'User testing']
+            }
+        ]
+    },
+    {
+        id: 'hospitality',
+        name: 'Hospitality & Guest Management',
+        icon: '🤝',
+        description: 'Creating memorable experiences. Our hospitality team ensures every speaker and guest feels welcomed and valued.',
+        featured: false,
+        members: [
+            {
+                id: 'ashok',
+                name: 'D. Ashok',
+                role: 'Guest Coordinator',
+                image: 'https://picsum.photos/seed/ashok/400/400',
+                email: 'ashok@tedxsrkr.com',
+                isLead: true,
+                responsibilities: ['Guest coordination', 'Hospitality leadership', 'VIP management']
+            },
+            {
+                id: 'venumadhav',
+                name: 'J. Venu Madhav',
+                role: 'Logistics Manager',
+                image: 'https://picsum.photos/seed/venumadhav/400/400',
+                email: 'venumadhav@tedxsrkr.com',
+                responsibilities: ['Event logistics', 'Supply management', 'Vendor coordination']
+            },
+            {
+                id: 'jaswanth',
+                name: 'K. Jaswanth',
+                role: 'Venue Coordinator',
+                image: 'https://picsum.photos/seed/jaswanth/400/400',
+                email: 'jaswanth@tedxsrkr.com',
+                responsibilities: ['Venue setup', 'Space planning', 'On-site coordination']
+            },
+            {
+                id: 'yaswanth',
+                name: 'P. Yaswanth',
+                role: 'Speaker Liaison',
+                image: 'https://picsum.photos/seed/yaswanth/400/400',
+                email: 'yaswanth@tedxsrkr.com',
+                responsibilities: ['Speaker communication', 'Presentation support', 'Schedule coordination']
+            },
+            {
+                id: 'yasaswini',
+                name: 'V. Yasaswini',
+                role: 'Registration Lead',
+                image: 'https://picsum.photos/seed/yasaswini/400/400',
+                email: 'yasaswini@tedxsrkr.com',
+                responsibilities: ['Registration management', 'Attendee services', 'Check-in coordination']
+            }
+        ]
+    },
+    {
+        id: 'media',
+        name: 'Media & Communications',
+        icon: '📢',
+        description: 'Amplifying ideas worth spreading. Our media team crafts compelling stories and builds the buzz around TEDxSRKR.',
+        featured: false,
+        members: [
+            {
+                id: 'hemasri',
+                name: 'K. Hema Sri',
+                role: 'Communications Lead',
+                image: 'https://picsum.photos/seed/hemasri/400/400',
+                email: 'hemasri@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
+                isLead: true,
+                bio: 'Strategic communications expert with a passion for storytelling.',
+                responsibilities: ['Communications strategy', 'Media relations', 'Brand messaging'],
+                quote: 'Stories connect us. Ideas inspire us. Together, we create change.'
+            },
+            {
+                id: 'anjali',
+                name: 'T. Anjali',
+                role: 'Content Creator',
+                image: 'https://picsum.photos/seed/anjali/400/400',
+                email: 'anjali@tedxsrkr.com',
+                instagram: 'https://instagram.com/',
+                responsibilities: ['Content creation', 'Speaker stories', 'Website content']
+            },
+            {
+                id: 'charanakshit',
+                name: 'M. Charan Akshit',
+                role: 'Social Media Manager',
+                image: 'https://picsum.photos/seed/charanakshit/400/400',
+                email: 'charanakshit@tedxsrkr.com',
+                instagram: 'https://instagram.com/',
+                twitter: 'https://twitter.com/',
+                responsibilities: ['Social media strategy', 'Daily posting', 'Community engagement']
+            },
+            {
+                id: 'maksudh',
+                name: 'M. Maksudh',
+                role: 'Graphic Designer',
+                image: 'https://picsum.photos/seed/maksudh/400/400',
+                email: 'maksudh@tedxsrkr.com',
+                instagram: 'https://instagram.com/',
+                responsibilities: ['Graphic design', 'Video editing', 'Visual identity']
+            }
+        ]
+    }
 ];
 
 export const STATS: Stat[] = [
