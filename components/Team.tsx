@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Linkedin, Mail, Instagram, Twitter, ExternalLink } from 'lucide-react';
 import { TEAM_CATEGORIES } from '../constants';
 import { TeamMember, TeamCategory } from '../types';
+import { GlareCard } from './ui/glare-card';
 
-// Minimalist Glass Card Component
+// Portrait Team Card Component (Reference Design)
 const GlassTeamCard: React.FC<{ member: TeamMember; category: TeamCategory; index: number }> = ({
     member,
     category,
@@ -18,37 +19,51 @@ const GlassTeamCard: React.FC<{ member: TeamMember; category: TeamCategory; inde
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-                className="group relative rounded-3xl p-8 text-center overflow-hidden"
-                style={{
-                    background: 'rgba(18, 18, 18, 0.4)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    border: '1px dashed rgba(230, 43, 30, 0.4)',
-                }}
+                className="flex justify-center"
             >
-                {/* Dashed circle for open position */}
-                <div className="relative w-32 h-32 md:w-36 md:h-36 mx-auto mb-6">
-                    <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#E62B1E]/50 
-                                    animate-[spin_20s_linear_infinite]" />
-                    <div className="absolute inset-2 rounded-full bg-[#1a1a1a]/80 flex items-center justify-center">
-                        <span className="text-5xl text-[#E62B1E]/60">+</span>
+                <GlareCard className="relative flex flex-col justify-between bg-black/90 backdrop-blur-md overflow-hidden min-h-[500px]">
+                    {/* Top Bar: Branding */}
+                    <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-5 z-20">
+                        {/* TEDx Branding */}
+                        <div className="text-left">
+                            <div className="text-[#E62B1E] font-black text-base tracking-tight">
+                                TED<span className="text-white">x</span>
+                            </div>
+                            <div className="text-white/80 text-xs font-medium">SRKR</div>
+                        </div>
                     </div>
-                </div>
 
-                <h3 className="text-xl font-bold text-white/90 mb-2">{member.role}</h3>
-                <p className="text-gray-500 text-sm mb-6">We're looking for you!</p>
+                    {/* Center Content */}
+                    <div className="flex-1 flex flex-col items-center justify-center px-6 py-20">
+                        <div className="relative w-32 h-32 mx-auto mb-8">
+                            <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#E62B1E]/50 
+                                            animate-[spin_20s_linear_infinite]" />
+                            <div className="absolute inset-2 rounded-full bg-[#1a1a1a]/80 flex items-center justify-center">
+                                <span className="text-5xl text-[#E62B1E]/60">+</span>
+                            </div>
+                        </div>
 
-                <motion.a
-                    href={`mailto:${member.email || 'careers@tedxsrkr.com'}`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#E62B1E] text-white text-sm 
-                               font-bold rounded-full hover:bg-[#ff4436] transition-colors duration-300
-                               shadow-[0_4px_20px_rgba(230,43,30,0.4)]"
-                >
-                    <Mail size={16} />
-                    Apply Now
-                </motion.a>
+                        <motion.a
+                            href={`mailto:${member.email || 'careers@tedxsrkr.com'}`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#E62B1E] text-white text-sm 
+                                       font-bold rounded-full hover:bg-[#ff4436] transition-colors duration-300
+                                       shadow-[0_4px_20px_rgba(230,43,30,0.4)]"
+                        >
+                            <Mail size={16} />
+                            Apply Now
+                        </motion.a>
+                    </div>
+
+                    {/* Bottom: Name & Role */}
+                    <div className="text-center pb-8 px-6">
+                        <h3 className="text-[#E62B1E] font-black text-xl uppercase tracking-wide mb-1">
+                            {member.role}
+                        </h3>
+                        <p className="text-white/60 text-sm uppercase tracking-wider">Open Position</p>
+                    </div>
+                </GlareCard>
             </motion.div>
         );
     }
@@ -59,170 +74,117 @@ const GlassTeamCard: React.FC<{ member: TeamMember; category: TeamCategory; inde
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-            whileHover={{ y: -8, scale: 1.02 }}
-            className="group relative rounded-3xl p-8 text-center overflow-hidden cursor-pointer"
-            style={{
-                background: 'rgba(18, 18, 18, 0.6)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
+            className="flex justify-center"
         >
-            {/* Animated gradient border on hover */}
-            <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{
-                    background: 'linear-gradient(135deg, rgba(230, 43, 30, 0.3) 0%, transparent 50%, rgba(230, 43, 30, 0.2) 100%)',
-                    padding: '1px',
-                }}
-            />
-
-            {/* Red glow effect on hover */}
-            <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500
-                            shadow-[0_0_60px_rgba(230,43,30,0.25),inset_0_0_60px_rgba(230,43,30,0.05)]" />
-
-            {/* Content container */}
-            <div className="relative z-10">
-                {/* Profile Image with Red Ring */}
-                <div className="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-6">
-                    {/* Outer glow ring */}
-                    <motion.div
-                        className="absolute inset-[-4px] rounded-full"
-                        style={{
-                            background: 'linear-gradient(135deg, #E62B1E 0%, #ff6b5e 50%, #E62B1E 100%)',
-                            opacity: 0.7,
-                        }}
-                        whileHover={{
-                            opacity: 1,
-                            boxShadow: '0 0 40px rgba(230, 43, 30, 0.6)',
-                        }}
-                        transition={{ duration: 0.3 }}
-                    />
-
-                    {/* Profile image */}
-                    <img
-                        src={member.image}
-                        alt={member.name}
-                        loading="lazy"
-                        className="relative w-full h-full rounded-full object-cover border-[3px] border-[#0A0A0A]
-                                   filter grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
-                    />
-
-                    {/* Lead badge */}
-                    {member.isLead && (
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 
-                                        bg-[#E62B1E] text-white text-[10px] font-bold uppercase tracking-wider
-                                        rounded-full shadow-lg">
-                            Lead
+            <GlareCard className="relative flex flex-col justify-between bg-black/90 backdrop-blur-md overflow-hidden min-h-[500px]">
+                {/* Top Bar: Branding + Social Icons */}
+                <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-5 z-20">
+                    {/* TEDx Branding */}
+                    <div className="text-left">
+                        <div className="text-[#E62B1E] font-black text-base tracking-tight">
+                            TED<span className="text-white">x</span>
                         </div>
-                    )}
+                        <div className="text-white/80 text-xs font-medium">SRKR</div>
+                    </div>
+
+                    {/* Social Icons */}
+                    <div className="flex items-center gap-3">
+                        {member.email && (
+                            <motion.a
+                                href={`mailto:${member.email}`}
+                                whileHover={{ scale: 1.2 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="text-white/70 hover:text-white transition-colors"
+                                aria-label={`Email ${member.name}`}
+                            >
+                                <Mail size={20} strokeWidth={2} />
+                            </motion.a>
+                        )}
+                        {member.instagram && (
+                            <motion.a
+                                href={member.instagram}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                whileHover={{ scale: 1.2 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="text-white/70 hover:text-white transition-colors"
+                                aria-label={`${member.name} on Instagram`}
+                            >
+                                <Instagram size={20} strokeWidth={2} />
+                            </motion.a>
+                        )}
+                        {member.linkedin && (
+                            <motion.a
+                                href={member.linkedin}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                whileHover={{ scale: 1.2 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="text-white/70 hover:text-white transition-colors"
+                                aria-label={`${member.name} on LinkedIn`}
+                            >
+                                <Linkedin size={20} strokeWidth={2} />
+                            </motion.a>
+                        )}
+                    </div>
                 </div>
 
-                {/* Member Info */}
-                <div className="mb-5">
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-1.5 tracking-tight
-                                   group-hover:text-white transition-colors">
+                {/* Photo with White Outline */}
+                <div className="flex-1 flex items-center justify-center px-6 pt-20 pb-4">
+                    <div className="relative w-full max-w-[240px]">
+                        {/* White outline effect */}
+                        <div
+                            className="absolute inset-0 rounded-[2.5rem]"
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 100%)',
+                                filter: 'blur(3px)',
+                                transform: 'scale(1.03)',
+                            }}
+                        />
+
+                        {/* Photo */}
+                        <img
+                            src={member.image}
+                            alt={member.name}
+                            loading="lazy"
+                            className="relative w-full h-auto object-cover rounded-[2.5rem]
+                                       shadow-[0_0_40px_rgba(255,255,255,0.25)]
+                                       border-[3px] border-white/30"
+                            style={{
+                                aspectRatio: '3/4',
+                                objectPosition: 'center 20%',
+                            }}
+                        />
+
+                        {/* Lead badge */}
+                        {member.isLead && (
+                            <div className="absolute top-4 left-4 px-3 py-1.5 
+                                            bg-[#E62B1E] text-white text-[10px] font-bold uppercase tracking-wider
+                                            rounded-full shadow-lg z-10">
+                                Lead
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Bottom: Name & Role */}
+                <div className="text-center pb-8 px-6">
+                    <h3 className="text-[#E62B1E] font-black text-xl md:text-2xl uppercase tracking-wide mb-1.5">
                         {member.name}
                     </h3>
-                    <p className="text-gray-400 text-sm md:text-base font-medium">
+                    <p className="text-white/90 text-sm uppercase tracking-[0.15em] font-semibold">
                         {member.role}
                     </p>
                 </div>
-
-                {/* Team Badge */}
-                <div className="mb-5">
-                    <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase 
-                                     tracking-wider border transition-all duration-300
-                                     bg-[#E62B1E]/10 text-[#E62B1E] border-[#E62B1E]/30
-                                     group-hover:bg-[#E62B1E]/20 group-hover:border-[#E62B1E]/50">
-                        {category.name.split(' ')[0]}
-                    </span>
-                </div>
-
-                {/* Social Links - Fade in on hover */}
-                <motion.div
-                    className="flex justify-center gap-3"
-                    initial={{ opacity: 0.5 }}
-                    whileHover={{ opacity: 1 }}
-                >
-                    {member.linkedin && (
-                        <a
-                            href={member.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${member.name} on LinkedIn`}
-                            className="w-10 h-10 rounded-full flex items-center justify-center
-                                       bg-white/5 border border-white/10 text-gray-400
-                                       hover:bg-[#E62B1E] hover:border-[#E62B1E] hover:text-white
-                                       hover:shadow-[0_4px_20px_rgba(230,43,30,0.4)]
-                                       transition-all duration-300 hover:-translate-y-1"
-                        >
-                            <Linkedin size={16} />
-                        </a>
-                    )}
-                    {member.instagram && (
-                        <a
-                            href={member.instagram}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${member.name} on Instagram`}
-                            className="w-10 h-10 rounded-full flex items-center justify-center
-                                       bg-white/5 border border-white/10 text-gray-400
-                                       hover:bg-[#E62B1E] hover:border-[#E62B1E] hover:text-white
-                                       hover:shadow-[0_4px_20px_rgba(230,43,30,0.4)]
-                                       transition-all duration-300 hover:-translate-y-1"
-                        >
-                            <Instagram size={16} />
-                        </a>
-                    )}
-                    {member.twitter && (
-                        <a
-                            href={member.twitter}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${member.name} on Twitter`}
-                            className="w-10 h-10 rounded-full flex items-center justify-center
-                                       bg-white/5 border border-white/10 text-gray-400
-                                       hover:bg-[#E62B1E] hover:border-[#E62B1E] hover:text-white
-                                       hover:shadow-[0_4px_20px_rgba(230,43,30,0.4)]
-                                       transition-all duration-300 hover:-translate-y-1"
-                        >
-                            <Twitter size={16} />
-                        </a>
-                    )}
-                    {member.email && (
-                        <a
-                            href={`mailto:${member.email}`}
-                            aria-label={`Email ${member.name}`}
-                            className="w-10 h-10 rounded-full flex items-center justify-center
-                                       bg-white/5 border border-white/10 text-gray-400
-                                       hover:bg-[#E62B1E] hover:border-[#E62B1E] hover:text-white
-                                       hover:shadow-[0_4px_20px_rgba(230,43,30,0.4)]
-                                       transition-all duration-300 hover:-translate-y-1"
-                        >
-                            <Mail size={16} />
-                        </a>
-                    )}
-                </motion.div>
-
-                {/* Quote - appears on hover */}
-                {member.quote && (
-                    <motion.p
-                        className="mt-5 text-xs text-gray-500 italic px-2 line-clamp-2
-                                   opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    >
-                        "{member.quote}"
-                    </motion.p>
-                )}
-            </div>
+            </GlareCard>
         </motion.div>
     );
 };
 
-// Main Team Component with Glassmorphism
+// Main Team Component
 const Team: React.FC = () => {
     return (
-        <section id="team" className="relative py-24 md:py-36 overflow-hidden">
+        <section id="team" className="relative py-24 md:py-36 overflow-hidden bg-[#0A0A0A]">
             {/* Ambient background effects */}
             <div className="absolute inset-0 pointer-events-none">
                 {/* Gradient orbs */}
@@ -308,7 +270,7 @@ const Team: React.FC = () => {
 
                         {/* Team Grid */}
                         <div className={`grid gap-6 md:gap-8 ${category.featured
-                                ? 'grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto'
+                                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto'
                                 : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                             }`}>
                             {category.members.map((member, memberIndex) => (

@@ -4,15 +4,13 @@ import Schedule from '../components/Schedule';
 
 const SchedulePage: React.FC = () => {
     return (
-        <div className="bg-[#0A0A0A] min-h-screen pt-24">
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-            >
-                <Schedule />
-            </motion.div>
-        </div>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
+            <Schedule />
+        </motion.div>
     );
 };
 
