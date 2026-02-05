@@ -11,7 +11,7 @@ export const SPEAKERS: Speaker[] = [
 
 export const SCHEDULE: ScheduleItem[] = [
     { time: '09:00 AM', title: 'Registration & Welcome', description: 'Doors open for registration. Grab a coffee and network.', icon: Calendar },
-    { time: '10:00 AM', title: 'Opening Ceremony', description: 'Official start of TEDxSRKR 2025.', icon: Milestone },
+    { time: '10:00 AM', title: 'Opening Ceremony', description: 'Official start of TEDxSRKR 2026.', icon: Milestone },
     { time: '10:30 AM', title: 'The Future of AI in Healthcare', description: 'Talk by Dr. Priya Sharma.', icon: Mic },
     { time: '11:15 AM', title: 'Building Bridges: Technology for Rural India', description: 'Talk by Rajesh Kumar.', icon: Mic },
     { time: '12:00 PM', title: 'Networking Lunch', description: 'Enjoy a catered lunch and connect with fellow attendees.', icon: Coffee },
@@ -37,6 +37,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 image: 'https://picsum.photos/seed/preethi/400/400',
                 email: 'preethi@tedxsrkr.com',
                 linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 isLead: true,
                 bio: 'Passionate about creating platforms for transformative ideas.',
                 responsibilities: ['Overall event coordination', 'Strategic planning', 'Stakeholder management'],
@@ -49,6 +50,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 image: 'https://picsum.photos/seed/gayatri/400/400',
                 email: 'gayatri@tedxsrkr.com',
                 linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 isLead: true,
                 bio: 'Dedicated to excellence in event management and team coordination.',
                 responsibilities: ['Operations management', 'Team coordination', 'Quality assurance'],
@@ -70,6 +72,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 image: 'https://picsum.photos/seed/giresh/400/400',
                 email: 'giresh@tedxsrkr.com',
                 linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 isLead: true,
                 bio: 'Passionate about storytelling and identifying ideas worth spreading.',
                 responsibilities: ['Speaker selection', 'Content development', 'Talk curation'],
@@ -91,6 +94,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 image: 'https://picsum.photos/seed/vivekananda/400/400',
                 email: 'vivekananda@tedxsrkr.com',
                 linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 isLead: true,
                 bio: 'Frontend specialist with expertise in React and modern web technologies.',
                 responsibilities: ['Frontend architecture', 'UI implementation', 'Team leadership'],
@@ -103,6 +107,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 image: 'https://picsum.photos/seed/saidani/400/400',
                 email: 'saidani@tedxsrkr.com',
                 linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 responsibilities: ['Server-side development', 'Database management', 'API integration']
             },
             {
@@ -112,6 +117,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 image: 'https://picsum.photos/seed/adithya/400/400',
                 email: 'adithya@tedxsrkr.com',
                 linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 responsibilities: ['End-to-end development', 'System integration', 'Performance optimization']
             },
             {
@@ -121,6 +127,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 image: 'https://picsum.photos/seed/akash/400/400',
                 email: 'akash@tedxsrkr.com',
                 linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 responsibilities: ['UI/UX design', 'Responsive implementation', 'User testing']
             }
         ]
@@ -138,6 +145,8 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Guest Coordinator',
                 image: 'https://picsum.photos/seed/ashok/400/400',
                 email: 'ashok@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 isLead: true,
                 responsibilities: ['Guest coordination', 'Hospitality leadership', 'VIP management']
             },
@@ -147,6 +156,8 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Logistics Manager',
                 image: 'https://picsum.photos/seed/venumadhav/400/400',
                 email: 'venumadhav@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 responsibilities: ['Event logistics', 'Supply management', 'Vendor coordination']
             },
             {
@@ -155,6 +166,8 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Venue Coordinator',
                 image: 'https://picsum.photos/seed/jaswanth/400/400',
                 email: 'jaswanth@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 responsibilities: ['Venue setup', 'Space planning', 'On-site coordination']
             },
             {
@@ -163,6 +176,8 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Speaker Liaison',
                 image: 'https://picsum.photos/seed/yaswanth/400/400',
                 email: 'yaswanth@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 responsibilities: ['Speaker communication', 'Presentation support', 'Schedule coordination']
             },
             {
@@ -171,6 +186,8 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Registration Lead',
                 image: 'https://picsum.photos/seed/yasaswini/400/400',
                 email: 'yasaswini@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
+                instagram: 'https://instagram.com/',
                 responsibilities: ['Registration management', 'Attendee services', 'Check-in coordination']
             }
         ]
@@ -201,6 +218,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Content Creator',
                 image: 'https://picsum.photos/seed/anjali/400/400',
                 email: 'anjali@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
                 instagram: 'https://instagram.com/',
                 responsibilities: ['Content creation', 'Speaker stories', 'Website content']
             },
@@ -210,6 +228,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Social Media Manager',
                 image: 'https://picsum.photos/seed/charanakshit/400/400',
                 email: 'charanakshit@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
                 instagram: 'https://instagram.com/',
                 twitter: 'https://twitter.com/',
                 responsibilities: ['Social media strategy', 'Daily posting', 'Community engagement']
@@ -220,6 +239,7 @@ export const TEAM_CATEGORIES: TeamCategory[] = [
                 role: 'Graphic Designer',
                 image: 'https://picsum.photos/seed/maksudh/400/400',
                 email: 'maksudh@tedxsrkr.com',
+                linkedin: 'https://linkedin.com/in/',
                 instagram: 'https://instagram.com/',
                 responsibilities: ['Graphic design', 'Video editing', 'Visual identity']
             }

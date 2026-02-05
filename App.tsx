@@ -6,6 +6,7 @@ import AboutPage from './pages/AboutPage';
 import SpeakersPage from './pages/SpeakersPage';
 import SchedulePage from './pages/SchedulePage';
 import TeamPage from './pages/TeamPage';
+import TeamProfilePage from './pages/TeamProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import NotFound from './pages/NotFound';
 
@@ -18,6 +19,7 @@ const App: React.FC = () => {
                 <Route path="speakers" element={<SpeakersPage />} />
                 <Route path="schedule" element={<SchedulePage />} />
                 <Route path="team" element={<TeamPage />} />
+                <Route path="team/:slug" element={<TeamProfilePage />} />
                 <Route path="register" element={<RegisterPage />} />
             </Route>
             {/* Catch-all 404 route */}

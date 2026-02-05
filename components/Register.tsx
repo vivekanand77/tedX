@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Loader2, AlertCircle, AlertTriangle } from 'lucide-react';
 
 interface FormData {
     name: string;
@@ -9,6 +9,7 @@ interface FormData {
     college: string;
     year: string;
     department: string;
+    ticketType: 'standard' | 'vip' | 'student';
 }
 
 interface FormErrors {
@@ -27,45 +28,51 @@ const Register: React.FC = () => {
         phone: '',
         college: 'SRKR Engineering College',
         year: '',
-        department: ''
+        department: '',
+        ticketType: 'standard'
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [registrationId, setRegistrationId] = useState<string | null>(null);
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-    // Validation rules
+    // Validation rules (synced with backend validators.ts)
     const validateField = (name: string, value: string): string | undefined => {
         switch (name) {
             case 'name':
                 if (!value.trim()) return 'Name is required';
                 if (value.length < 2) return 'Name must be at least 2 characters';
-                if (!/^[a-zA-Z\s.]+$/.test(value)) return 'Name can only contain letters';
+                if (value.length > 100) return 'Name cannot exceed 100 characters';
+                if (!/^[a-zA-Z\s.'"-]+$/.test(value)) return 'Name contains invalid characters';
                 return undefined;
 
             case 'email':
                 if (!value.trim()) return 'Email is required';
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email';
+                if (value.length > 254) return 'Email address too long';
                 return undefined;
 
             case 'phone':
-                if (!value.trim()) return 'Phone number is required';
-                if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value.replace(/\s/g, ''))) {
+                // Phone is optional in backend, but we keep frontend validation
+                if (value && !/^[+]?[\d\s()-]*$/.test(value)) {
                     return 'Please enter a valid phone number';
                 }
+                if (value && value.length > 20) return 'Phone number too long';
                 return undefined;
 
             case 'college':
-                if (!value.trim()) return 'College/Institution is required';
+                if (value && value.length > 200) return 'College name too long';
                 return undefined;
 
             case 'year':
-                if (!value || value === 'Select Year') return 'Please select your year';
+                // Optional field
                 return undefined;
 
             case 'department':
-                if (!value.trim()) return 'Department is required';
+                if (value && value.length > 100) return 'Department name too long';
                 return undefined;
 
             default:
@@ -77,11 +84,26 @@ const Register: React.FC = () => {
         const newErrors: FormErrors = {};
         let isValid = true;
 
-        (Object.keys(formData) as Array<keyof FormData>).forEach((key) => {
-            const error = validateField(key, formData[key]);
+        // Only name and email are strictly required
+        const requiredFields: (keyof FormData)[] = ['name', 'email'];
+
+        requiredFields.forEach((key) => {
+            const error = validateField(key, formData[key] as string);
             if (error) {
-                newErrors[key] = error;
+                newErrors[key as keyof FormErrors] = error;
                 isValid = false;
+            }
+        });
+
+        // Validate optional fields if they have values
+        const optionalFields: (keyof FormData)[] = ['phone', 'college', 'year', 'department'];
+        optionalFields.forEach((key) => {
+            if (formData[key]) {
+                const error = validateField(key, formData[key] as string);
+                if (error) {
+                    newErrors[key as keyof FormErrors] = error;
+                    isValid = false;
+                }
             }
         });
 
@@ -92,6 +114,7 @@ const Register: React.FC = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
         setFormData(prev => ({ ...prev, [id]: value }));
+        setSubmitError(null); // Clear submit error on change
 
         // Clear error on change if field was touched
         if (touched[id]) {
@@ -110,7 +133,7 @@ const Register: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Mark all fields as touched
+        // Mark required fields as touched
         const allTouched: Record<string, boolean> = {};
         Object.keys(formData).forEach(key => { allTouched[key] = true; });
         setTouched(allTouched);
@@ -118,12 +141,48 @@ const Register: React.FC = () => {
         if (!validateForm()) return;
 
         setIsSubmitting(true);
+        setSubmitError(null);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.name.trim(),
+                    email: formData.email.trim().toLowerCase(),
+                    phone: formData.phone?.trim() || undefined,
+                    college: formData.college?.trim() || undefined,
+                    year: formData.year || undefined,
+                    department: formData.department?.trim() || undefined,
+                    ticketType: formData.ticketType,
+                }),
+            });
 
-        setIsSubmitting(false);
-        setIsSuccess(true);
+            const result = await response.json();
+
+            if (!response.ok) {
+                // Handle specific error codes
+                if (response.status === 429) {
+                    throw new Error('Too many requests. Please wait a moment and try again.');
+                }
+                if (response.status === 409) {
+                    throw new Error('This email is already registered for the event.');
+                }
+                throw new Error(result.error || 'Registration failed. Please try again.');
+            }
+
+            // Success!
+            setRegistrationId(result.registrationId);
+            setIsSuccess(true);
+
+        } catch (err) {
+            console.error('Registration error:', err);
+            setSubmitError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const inputClasses = (fieldName: keyof FormErrors) => `
@@ -164,17 +223,21 @@ const Register: React.FC = () => {
                         <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
                             You're In!
                         </h2>
-                        <p className="text-gray-400 text-lg mb-8">
+                        <p className="text-gray-400 text-lg mb-4">
                             Thank you for registering for TEDxSRKR 2026.
-                            We've sent a confirmation email to <strong className="text-white">{formData.email}</strong>
                         </p>
+                        {registrationId && (
+                            <p className="text-gray-500 text-sm mb-8">
+                                Registration ID: <code className="text-[#E62B1E]">{registrationId}</code>
+                            </p>
+                        )}
 
                         <div className="p-6 rounded-2xl bg-[#1a1a1a] border border-gray-800 mb-8">
                             <h3 className="text-lg font-semibold text-white mb-3">What's Next?</h3>
                             <ul className="text-gray-400 text-sm text-left space-y-2">
                                 <li className="flex items-start gap-2">
                                     <span className="text-[#E62B1E]">•</span>
-                                    Check your email for confirmation and ticket details
+                                    Save your registration ID for check-in
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span className="text-[#E62B1E]">•</span>
@@ -241,6 +304,24 @@ const Register: React.FC = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                 >
                     <div className="p-8 md:p-12">
+                        {/* Submit Error Banner */}
+                        <AnimatePresence>
+                            {submitError && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-start gap-3"
+                                >
+                                    <AlertTriangle size={20} className="text-red-400 flex-shrink-0 mt-0.5" />
+                                    <div className="text-left">
+                                        <p className="text-red-400 text-sm font-medium">Registration Failed</p>
+                                        <p className="text-red-300/80 text-sm mt-1">{submitError}</p>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         <form onSubmit={handleSubmit} className="space-y-6 text-left" noValidate>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Name Field */}
@@ -256,10 +337,13 @@ const Register: React.FC = () => {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                         className={inputClasses('name')}
+                                        aria-describedby={errors.name ? 'name-error' : undefined}
+                                        aria-invalid={errors.name && touched.name ? 'true' : 'false'}
                                     />
                                     <AnimatePresence>
                                         {errors.name && touched.name && (
                                             <motion.p
+                                                id="name-error"
                                                 initial={{ opacity: 0, y: -10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0 }}
@@ -285,10 +369,13 @@ const Register: React.FC = () => {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                         className={inputClasses('email')}
+                                        aria-describedby={errors.email ? 'email-error' : undefined}
+                                        aria-invalid={errors.email && touched.email ? 'true' : 'false'}
                                     />
                                     <AnimatePresence>
                                         {errors.email && touched.email && (
                                             <motion.p
+                                                id="email-error"
                                                 initial={{ opacity: 0, y: -10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0 }}
@@ -306,7 +393,7 @@ const Register: React.FC = () => {
                                 {/* Phone Field */}
                                 <div>
                                     <label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">
-                                        Phone Number <span className="text-[#E62B1E]">*</span>
+                                        Phone Number <span className="text-gray-600">(optional)</span>
                                     </label>
                                     <input
                                         type="tel"
@@ -335,7 +422,7 @@ const Register: React.FC = () => {
                                 {/* College Field */}
                                 <div>
                                     <label htmlFor="college" className="block text-sm font-medium text-gray-400 mb-2">
-                                        College / Institution <span className="text-[#E62B1E]">*</span>
+                                        College / Institution <span className="text-gray-600">(optional)</span>
                                     </label>
                                     <input
                                         type="text"
@@ -345,19 +432,6 @@ const Register: React.FC = () => {
                                         onBlur={handleBlur}
                                         className={inputClasses('college')}
                                     />
-                                    <AnimatePresence>
-                                        {errors.college && touched.college && (
-                                            <motion.p
-                                                initial={{ opacity: 0, y: -10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0 }}
-                                                className="mt-1.5 text-xs text-red-400 flex items-center gap-1"
-                                            >
-                                                <AlertCircle size={12} />
-                                                {errors.college}
-                                            </motion.p>
-                                        )}
-                                    </AnimatePresence>
                                 </div>
                             </div>
 
@@ -365,7 +439,7 @@ const Register: React.FC = () => {
                                 {/* Year Field */}
                                 <div>
                                     <label htmlFor="year" className="block text-sm font-medium text-gray-400 mb-2">
-                                        Year <span className="text-[#E62B1E]">*</span>
+                                        Year <span className="text-gray-600">(optional)</span>
                                     </label>
                                     <select
                                         id="year"
@@ -380,50 +454,65 @@ const Register: React.FC = () => {
                                         <option value="3rd Year">3rd Year</option>
                                         <option value="4th Year">4th Year</option>
                                         <option value="Faculty">Faculty</option>
-                                        <option value="Alumni">Alumni</option>
+                                        <option value="Other">Other</option>
                                     </select>
-                                    <AnimatePresence>
-                                        {errors.year && touched.year && (
-                                            <motion.p
-                                                initial={{ opacity: 0, y: -10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0 }}
-                                                className="mt-1.5 text-xs text-red-400 flex items-center gap-1"
-                                            >
-                                                <AlertCircle size={12} />
-                                                {errors.year}
-                                            </motion.p>
-                                        )}
-                                    </AnimatePresence>
                                 </div>
 
-                                {/* Department Field */}
+                                {/* Department/Branch Field */}
                                 <div>
                                     <label htmlFor="department" className="block text-sm font-medium text-gray-400 mb-2">
-                                        Department <span className="text-[#E62B1E]">*</span>
+                                        Branch <span className="text-gray-600">(optional)</span>
                                     </label>
-                                    <input
-                                        type="text"
+                                    <select
                                         id="department"
-                                        placeholder="Computer Science"
                                         value={formData.department}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        className={inputClasses('department')}
-                                    />
-                                    <AnimatePresence>
-                                        {errors.department && touched.department && (
-                                            <motion.p
-                                                initial={{ opacity: 0, y: -10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0 }}
-                                                className="mt-1.5 text-xs text-red-400 flex items-center gap-1"
-                                            >
-                                                <AlertCircle size={12} />
-                                                {errors.department}
-                                            </motion.p>
-                                        )}
-                                    </AnimatePresence>
+                                        className={`${inputClasses('department')} appearance-none cursor-pointer`}
+                                    >
+                                        <option value="">Select Branch</option>
+                                        <option value="CSE">CSE - Computer Science & Engineering</option>
+                                        <option value="AIDS">AIDS - AI & Data Science</option>
+                                        <option value="AIML">AIML - AI & Machine Learning</option>
+                                        <option value="CSIT">CSIT - CS & Information Technology</option>
+                                        <option value="CSBS">CSBS - CS & Business Systems</option>
+                                        <option value="CSD">CSD - CS & Design</option>
+                                        <option value="IT">IT - Information Technology</option>
+                                        <option value="CIC">CIC - Computer Science (Cyber Security)</option>
+                                        <option value="MECH">MECH - Mechanical Engineering</option>
+                                        <option value="CIVIL">CIVIL - Civil Engineering</option>
+                                        <option value="EEE">EEE - Electrical & Electronics</option>
+                                        <option value="ECE">ECE - Electronics & Communication</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Ticket Type Selector */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-3">
+                                    Ticket Type
+                                </label>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {[
+                                        { value: 'student', label: 'Student', price: '₹199' },
+                                        { value: 'standard', label: 'Standard', price: '₹499' },
+                                        { value: 'vip', label: 'VIP', price: '₹999' },
+                                    ].map((ticket) => (
+                                        <button
+                                            key={ticket.value}
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({ ...prev, ticketType: ticket.value as FormData['ticketType'] }))}
+                                            className={`p-4 rounded-xl border transition-all duration-200 text-center ${formData.ticketType === ticket.value
+                                                ? 'bg-[#E62B1E]/10 border-[#E62B1E] text-white'
+                                                : 'bg-[#1a1a1a] border-gray-700 text-gray-400 hover:border-gray-500'
+                                                }`}
+                                        >
+                                            <div className="text-sm font-medium">{ticket.label}</div>
+                                            <div className={`text-lg font-bold mt-1 ${formData.ticketType === ticket.value ? 'text-[#E62B1E]' : 'text-white'
+                                                }`}>{ticket.price}</div>
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
 

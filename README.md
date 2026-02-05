@@ -1,8 +1,10 @@
 # TEDxSRKR 2026 Website
 
-A modern, high-performance web application for TEDxSRKR 2026 - "The Future of Ideas"
+> Official website for TEDxSRKR 2026 - Ideas Worth Spreading
 
-![TEDxSRKR](https://tedxsrkr.com/og-image.jpg)
+**Stack:** React 19 • Vite • TypeScript • Tailwind CSS • Framer Motion • Supabase
+
+---
 
 ## 🚀 Quick Start
 
@@ -15,211 +17,119 @@ npm run dev
 
 # Build for production
 npm run build
-
-# Preview production build
-npm run preview
 ```
-
-**Development URL**: http://localhost:3000
 
 ---
 
-## 📋 Tech Stack
+## 📋 Pre-Deployment Checklist
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 19.x | UI Framework |
-| Vite | 6.x | Build Tool |
-| TypeScript | 5.x | Type Safety |
-| Tailwind CSS | 3.x | Styling |
-| Framer Motion | 12.x | Animations |
-| React Router | 7.x | Navigation |
-| Lucide React | 0.5x | Icons |
+### 🔴 Critical (Must Complete)
+
+| Task | File | Status |
+|------|------|--------|
+| Add Supabase credentials | `.env.local` | ⬜ |
+| Run database migration | `supabase/migrations/001_create_registrations.sql` | ⬜ |
+| Replace speaker images (4) | `constants.ts` lines 6-9 | ⬜ |
+| Replace team images (17) | `constants.ts` lines 37-244 | ⬜ |
+| Add social media URLs | `components/Footer.tsx` lines 7-10 | ⬜ |
+| Complete team LinkedIn URLs | `constants.ts` (search `linkedin.com/in/`) | ⬜ |
+| Complete team Instagram URLs | `constants.ts` (search `instagram.com/`) | ⬜ |
+| Create og-image.jpg (1200x630) | `public/og-image.jpg` | ⬜ |
+| Create twitter-card.jpg (1200x675) | `public/twitter-card.jpg` | ⬜ |
+| Create favicon files | `public/favicon-*.png` | ⬜ |
+
+### 🟡 Recommended (Before Launch)
+
+| Task | Notes |
+|------|-------|
+| Update schedule year | `constants.ts` line 14 says "2025" - should be "2026" |
+| Add Google Analytics | Add `VITE_GA_ID` to `.env.production` |
+| Set up email confirmations | Install Resend or SendGrid |
+| Test registration flow | Submit test registration, check Supabase |
+
+### 🟢 Optional Enhancements
+
+| Task | Notes |
+|------|-------|
+| Migrate rate limiting to Redis | Use Upstash for production scale |
+| Add admin dashboard | View/export registrations |
+| Add privacy policy | `/privacy` route |
+
+---
+
+## 🔧 Environment Variables
+
+### Required (`.env.local`)
+```bash
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJ...your-key
+```
+
+### Optional
+```bash
+VITE_GA_ID=G-XXXXXXXXXX
+RESEND_API_KEY=re_xxxxx
+```
 
 ---
 
 ## 📁 Project Structure
 
 ```
-tedxsrkr-website/
-├── components/         # Reusable UI components
-│   ├── CinematicHero.tsx    # Hero section with parallax
-│   ├── Team.tsx             # Glassmorphism team cards
-│   ├── Register.tsx         # Form with validation
-│   ├── Schedule.tsx         # Event timeline
-│   ├── Speakers.tsx         # Speaker cards
-│   ├── ErrorBoundary.tsx    # Error handling
-│   └── Layout.tsx           # Page layout wrapper
-├── pages/              # Route pages
-│   ├── Home.tsx
-│   ├── TeamPage.tsx
-│   ├── RegisterPage.tsx
-│   ├── NotFound.tsx         # 404 page
-│   └── ServerError.tsx      # 500 page
-├── public/             # Static assets
-│   ├── robots.txt
-│   ├── sitemap.xml
-│   └── images/
-├── constants.ts        # Team, speakers, schedule data
-├── types.ts           # TypeScript interfaces
-├── App.tsx            # Route configuration
-└── index.tsx          # Entry point
+├── api/                    # Vercel serverless functions
+│   └── register.ts         # Registration endpoint
+├── components/             # React components
+├── lib/                    # Utilities (Supabase, validators, rate limiting)
+├── pages/                  # Route pages
+├── public/                 # Static assets
+├── supabase/migrations/    # Database schema
+├── constants.ts            # Speakers, team, schedule data
+└── types.ts                # TypeScript interfaces
 ```
 
 ---
 
-## 🎨 Design System
+## 🌐 Deployment (Vercel)
 
-### Colors
-```css
---ted-red: #E62B1E
---ted-red-light: #ff6b5e
---background: #0A0A0A
---surface: #121212
---text-primary: #FFFFFF
---text-secondary: #888888
-```
+1. Push to GitHub
+2. Import in Vercel Dashboard
+3. Add environment variables:
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+4. Deploy
 
-### Typography
-- **Headings**: Inter, system-ui (700-800 weight)
-- **Body**: Inter, system-ui (400-500 weight)
-
-### Components
-- **Glassmorphism**: `backdrop-filter: blur(20px)` with semi-transparent backgrounds
-- **Animations**: Framer Motion for all transitions
-- **Hover Effects**: Scale, glow, and color transitions
+### Custom Domain
+1. Add domain in Vercel
+2. Update DNS records
+3. Update `VITE_SITE_URL` in environment
+4. Update `og:url` in `index.html`
 
 ---
 
-## 🌐 Environment Variables
+## 📍 Content Locations
 
-Create `.env.production` for production:
-
-```env
-VITE_APP_TITLE=TEDxSRKR 2026
-VITE_EVENT_DATE=2026-03-15
-VITE_EVENT_VENUE=SRKR Engineering College
-VITE_SITE_URL=https://tedxsrkr.com
-VITE_GA_ID=G-XXXXXXXXXX
-```
-
----
-
-## 🚀 Deployment
-
-### Option 1: Vercel (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Login to Vercel
-vercel login
-
-# Deploy to staging
-vercel
-
-# Deploy to production
-vercel --prod
-```
-
-### Option 2: Netlify
-
-```bash
-# Install Netlify CLI
-npm i -g netlify-cli
-
-# Login
-netlify login
-
-# Deploy
-netlify deploy --prod --dir=dist
-```
-
-### Option 3: Manual
-
-```bash
-# Build the project
-npm run build
-
-# The dist/ folder contains the production build
-# Upload to any static hosting service
-```
+| Content | File | Lines |
+|---------|------|-------|
+| Speakers | `constants.ts` | 5-10 |
+| Schedule | `constants.ts` | 12-22 |
+| Team | `constants.ts` | 25-247 |
+| Stats | `constants.ts` | 250-255 |
+| Footer social links | `components/Footer.tsx` | 6-11 |
+| SEO meta tags | `index.html` | 8-32 |
 
 ---
 
-## ✅ Pre-Deployment Checklist
+## ✅ What's Working
 
-See [production-checklist.md](./production-checklist.md) for the complete deployment checklist.
-
-**Quick checklist:**
-- [ ] Run `npm run build` successfully
-- [ ] Test with `npm run preview`
-- [ ] Update meta tags in `index.html`
-- [ ] Add social media images (OG, Twitter)
-- [ ] Configure environment variables
-- [ ] Test all routes work correctly
-- [ ] Verify mobile responsiveness
+- ✅ Registration form → Supabase
+- ✅ Mobile responsive navigation
+- ✅ Dynamic page titles
+- ✅ Skip-to-content accessibility
+- ✅ Rate limiting on API
+- ✅ Form validation (frontend + backend)
+- ✅ SEO meta tags configured
+- ✅ sitemap.xml & robots.txt
 
 ---
 
-## 📊 Performance Targets
-
-| Metric | Target | Current |
-|--------|--------|---------|
-| Lighthouse Performance | 90+ | ~88 |
-| First Contentful Paint | <1.5s | ~1.2s |
-| Time to Interactive | <3s | ~2.5s |
-| Bundle Size (gzipped) | <200KB | ~180KB |
-
----
-
-## 🧪 Testing
-
-```bash
-# Type checking
-npx tsc --noEmit
-
-# Build test
-npm run build
-
-# Preview and manual test
-npm run preview
-```
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed for TEDxSRKR use only.
-
-**TEDx** is a program of local, self-organized events that bring people together to share a TED-like experience.
-
----
-
-## 👥 Team
-
-Built with ❤️ by the **TEDxSRKR Tech Team**
-
-- Ch. Vivekananda - Lead Developer
-- Sk. Saidani - Backend Developer
-- T. Adithya - Full Stack Developer
-- V. Akash - UI/UX Developer
-
----
-
-## 📞 Support
-
-For technical issues: [tech@tedxsrkr.com](mailto:tech@tedxsrkr.com)
-
-For general inquiries: [team@tedxsrkr.com](mailto:team@tedxsrkr.com)
+*Last updated: 2026-02-04*

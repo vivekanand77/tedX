@@ -1,336 +1,481 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Linkedin, Mail, Instagram, Twitter, ExternalLink } from 'lucide-react';
-import { TEAM_CATEGORIES } from '../constants';
-import { TeamMember, TeamCategory } from '../types';
-import { GlareCard } from './ui/glare-card';
+/**
+ * Team Section - Premium TED-Style Design
+ * 
+ * Design Principles:
+ * ─────────────────
+ * - Consistent auto-fit grid for even alignment regardless of member count
+ * - Uniform card sizing with fixed aspect ratios
+ * - Clear visual hierarchy: Section title → Cards → CTA
+ * - Balanced negative space with consistent vertical rhythm
+ * - Dark minimalist aesthetic with high contrast
+ * 
+ * Motion & Interaction Enhancements:
+ * ──────────────────────────────────
+ * - Pre-hover affordances for interactivity hints
+ * - Layered hover effects with elevation and scaling
+ * - Role hierarchy encoded through animation timing
+ * - Reduced harsh grayscale while preserving monochrome aesthetic
+ * - Section-level entrance animations
+ * - Mobile tap interactions replicating hover behavior
+ * - Accessibility: respects reduced motion and contrast preferences
+ */
 
-// Portrait Team Card Component (Reference Design)
-const GlassTeamCard: React.FC<{ member: TeamMember; category: TeamCategory; index: number }> = ({
-    member,
-    category,
-    index
+import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { TEAM_CATEGORIES } from '../constants';
+import { Linkedin, Instagram, Mail } from 'lucide-react';
+
+// ════════════════════════════════════════════════════════════════════════════
+// Animation Variants
+// ════════════════════════════════════════════════════════════════════════════
+
+const sectionVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.08,
+            delayChildren: 0.1,
+        },
+    },
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 24, scale: 0.98 },
+    visible: (i: number) => ({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+            duration: 0.5,
+            delay: i * 0.06,
+            ease: [0.25, 0.46, 0.45, 0.94],
+        },
+    }),
+};
+
+// Role hierarchy timing - leadership roles animate slightly faster
+const getRoleDelay = (role: string, baseIndex: number): number => {
+    const isLeadership = /lead|head|director|organizer|licensee/i.test(role);
+    return isLeadership ? baseIndex * 0.04 : baseIndex * 0.06;
+};
+
+// ════════════════════════════════════════════════════════════════════════════
+// Team Member Card Component
+// ════════════════════════════════════════════════════════════════════════════
+
+interface MemberCardProps {
+    id: string;
+    name: string;
+    role: string;
+    image: string;
+    linkedin?: string;
+    instagram?: string;
+    isOpenPosition?: boolean;
+    index: number;
+}
+
+const MemberCard: React.FC<MemberCardProps> = ({
+    id,
+    name,
+    role,
+    image,
+    linkedin,
+    instagram,
+    isOpenPosition,
+    index,
 }) => {
-    // Open position card
-    if (member.isOpenPosition) {
+    const [isActive, setIsActive] = useState(false);
+    const prefersReducedMotion = useReducedMotion();
+    
+    // Handle social link click without nesting anchors
+    const handleSocialClick = (e: React.MouseEvent, url: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
+    // Mobile tap handling
+    const handleTouchStart = () => setIsActive(true);
+    const handleTouchEnd = () => setTimeout(() => setIsActive(false), 300);
+
+    if (isOpenPosition) {
         return (
             <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-                className="flex justify-center"
+                variants={cardVariants}
+                custom={index}
+                className="flex flex-col"
             >
-                <GlareCard className="relative flex flex-col justify-between bg-black/90 backdrop-blur-md overflow-hidden min-h-[500px]">
-                    {/* Top Bar: Branding */}
-                    <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-5 z-20">
-                        {/* TEDx Branding */}
-                        <div className="text-left">
-                            <div className="text-[#E62B1E] font-black text-base tracking-tight">
-                                TED<span className="text-white">x</span>
-                            </div>
-                            <div className="text-white/80 text-xs font-medium">SRKR</div>
-                        </div>
+                <div className="aspect-[3/4] w-full bg-white/[0.02] border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-[#E62B1E]/30 hover:bg-[#E62B1E]/[0.02] transition-all duration-500">
+                    <div className="w-12 h-12 rounded-full bg-[#E62B1E]/10 flex items-center justify-center">
+                        <span className="text-2xl text-[#E62B1E]">+</span>
                     </div>
-
-                    {/* Center Content */}
-                    <div className="flex-1 flex flex-col items-center justify-center px-6 py-20">
-                        <div className="relative w-32 h-32 mx-auto mb-8">
-                            <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#E62B1E]/50 
-                                            animate-[spin_20s_linear_infinite]" />
-                            <div className="absolute inset-2 rounded-full bg-[#1a1a1a]/80 flex items-center justify-center">
-                                <span className="text-5xl text-[#E62B1E]/60">+</span>
-                            </div>
-                        </div>
-
-                        <motion.a
-                            href={`mailto:${member.email || 'careers@tedxsrkr.com'}`}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#E62B1E] text-white text-sm 
-                                       font-bold rounded-full hover:bg-[#ff4436] transition-colors duration-300
-                                       shadow-[0_4px_20px_rgba(230,43,30,0.4)]"
-                        >
-                            <Mail size={16} />
-                            Apply Now
-                        </motion.a>
-                    </div>
-
-                    {/* Bottom: Name & Role */}
-                    <div className="text-center pb-8 px-6">
-                        <h3 className="text-[#E62B1E] font-black text-xl uppercase tracking-wide mb-1">
-                            {member.role}
-                        </h3>
-                        <p className="text-white/60 text-sm uppercase tracking-wider">Open Position</p>
-                    </div>
-                </GlareCard>
+                    <span className="text-white/40 text-sm font-medium">Open Position</span>
+                </div>
+                <div className="mt-4 text-center">
+                    <h3 className="text-base font-bold text-[#E62B1E] uppercase tracking-wider">
+                        {role}
+                    </h3>
+                    <p className="text-white/30 text-sm mt-1">Join our team</p>
+                </div>
             </motion.div>
         );
     }
 
+    const roleDelay = getRoleDelay(role, index);
+
     return (
         <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-            className="flex justify-center"
+            variants={cardVariants}
+            custom={index}
+            className="group flex flex-col"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
         >
-            <GlareCard className="relative flex flex-col justify-between bg-black/90 backdrop-blur-md overflow-hidden min-h-[500px]">
-                {/* Top Bar: Branding + Social Icons */}
-                <div className="absolute top-0 left-0 right-0 flex justify-between items-start p-5 z-20">
-                    {/* TEDx Branding */}
-                    <div className="text-left">
-                        <div className="text-[#E62B1E] font-black text-base tracking-tight">
-                            TED<span className="text-white">x</span>
-                        </div>
-                        <div className="text-white/80 text-xs font-medium">SRKR</div>
-                    </div>
+            {/* Image Container - Wrapped in Link */}
+            <Link 
+                to={`/team/${id}`} 
+                className="block relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-white/[0.02]"
+            >
+                {/* Pre-hover affordance - subtle border glow */}
+                <div 
+                    className={`
+                        absolute inset-0 rounded-xl pointer-events-none z-10
+                        border border-transparent
+                        transition-all duration-500 ease-out
+                        group-hover:border-white/10 group-hover:shadow-[0_0_20px_rgba(230,43,30,0.15)]
+                        ${isActive ? 'border-white/10 shadow-[0_0_20px_rgba(230,43,30,0.15)]' : ''}
+                    `}
+                />
+                
+                {/* Elevation shadow on hover */}
+                <motion.div
+                    className="absolute inset-0 rounded-xl pointer-events-none"
+                    initial={false}
+                    animate={{
+                        boxShadow: isActive 
+                            ? '0 20px 40px -12px rgba(0,0,0,0.5)' 
+                            : '0 4px 12px -4px rgba(0,0,0,0.2)',
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{ willChange: 'box-shadow' }}
+                />
 
-                    {/* Social Icons */}
-                    <div className="flex items-center gap-3">
-                        {member.email && (
-                            <motion.a
-                                href={`mailto:${member.email}`}
-                                whileHover={{ scale: 1.2 }}
+                {/* Image with softer grayscale */}
+                <motion.img
+                    src={image}
+                    alt={`${name}, ${role}`}
+                    loading="lazy"
+                    className={`
+                        w-full h-full object-cover object-top
+                        transition-all duration-500 ease-out
+                        ${prefersReducedMotion 
+                            ? 'grayscale-[70%] group-hover:grayscale-0' 
+                            : 'grayscale-[70%] group-hover:grayscale-0 group-hover:scale-[1.03]'
+                        }
+                        ${isActive ? 'grayscale-0 scale-[1.03]' : ''}
+                    `}
+                    style={{ 
+                        filter: isActive 
+                            ? 'grayscale(0%)' 
+                            : undefined,
+                    }}
+                />
+
+                {/* Gradient overlay - enhanced for depth */}
+                <div 
+                    className={`
+                        absolute inset-0 
+                        bg-gradient-to-t from-black/70 via-black/20 to-transparent 
+                        opacity-0 group-hover:opacity-100 
+                        transition-opacity duration-400
+                        ${isActive ? 'opacity-100' : ''}
+                    `}
+                />
+                
+                {/* Subtle top highlight on hover */}
+                <div 
+                    className={`
+                        absolute inset-x-0 top-0 h-px
+                        bg-gradient-to-r from-transparent via-white/20 to-transparent
+                        opacity-0 group-hover:opacity-100
+                        transition-opacity duration-500
+                        ${isActive ? 'opacity-100' : ''}
+                    `}
+                />
+
+                {/* Social links - Using buttons to avoid nested anchors */}
+                {(linkedin || instagram) && (
+                    <motion.div 
+                        className={`
+                            absolute bottom-3 left-3 right-3 flex justify-center gap-2 
+                            opacity-0 group-hover:opacity-100 
+                            transition-all duration-300
+                            ${isActive ? 'opacity-100' : ''}
+                        `}
+                        initial={false}
+                        animate={{ 
+                            y: isActive ? 0 : 8,
+                        }}
+                        transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    >
+                        {linkedin && (
+                            <motion.button
+                                type="button"
+                                onClick={(e) => handleSocialClick(e, linkedin)}
+                                className="p-2.5 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-[#0077B5] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+                                aria-label={`${name} on LinkedIn`}
+                                whileHover={prefersReducedMotion ? {} : { scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="text-white/70 hover:text-white transition-colors"
-                                aria-label={`Email ${member.name}`}
                             >
-                                <Mail size={20} strokeWidth={2} />
-                            </motion.a>
+                                <Linkedin size={16} />
+                            </motion.button>
                         )}
-                        {member.instagram && (
-                            <motion.a
-                                href={member.instagram}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                whileHover={{ scale: 1.2 }}
+                        {instagram && (
+                            <motion.button
+                                type="button"
+                                onClick={(e) => handleSocialClick(e, instagram)}
+                                className="p-2.5 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-[#E1306C] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+                                aria-label={`${name} on Instagram`}
+                                whileHover={prefersReducedMotion ? {} : { scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="text-white/70 hover:text-white transition-colors"
-                                aria-label={`${member.name} on Instagram`}
                             >
-                                <Instagram size={20} strokeWidth={2} />
-                            </motion.a>
+                                <Instagram size={16} />
+                            </motion.button>
                         )}
-                        {member.linkedin && (
-                            <motion.a
-                                href={member.linkedin}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                whileHover={{ scale: 1.2 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="text-white/70 hover:text-white transition-colors"
-                                aria-label={`${member.name} on LinkedIn`}
-                            >
-                                <Linkedin size={20} strokeWidth={2} />
-                            </motion.a>
-                        )}
-                    </div>
-                </div>
+                    </motion.div>
+                )}
+            </Link>
 
-                {/* Photo with White Outline */}
-                <div className="flex-1 flex items-center justify-center px-6 pt-20 pb-4">
-                    <div className="relative w-full max-w-[240px]">
-                        {/* White outline effect */}
-                        <div
-                            className="absolute inset-0 rounded-[2.5rem]"
-                            style={{
-                                background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.15) 100%)',
-                                filter: 'blur(3px)',
-                                transform: 'scale(1.03)',
-                            }}
-                        />
-
-                        {/* Photo */}
-                        <img
-                            src={member.image}
-                            alt={member.name}
-                            loading="lazy"
-                            className="relative w-full h-auto object-cover rounded-[2.5rem]
-                                       shadow-[0_0_40px_rgba(255,255,255,0.25)]
-                                       border-[3px] border-white/30"
-                            style={{
-                                aspectRatio: '3/4',
-                                objectPosition: 'center 20%',
-                            }}
-                        />
-
-                        {/* Lead badge */}
-                        {member.isLead && (
-                            <div className="absolute top-4 left-4 px-3 py-1.5 
-                                            bg-[#E62B1E] text-white text-[10px] font-bold uppercase tracking-wider
-                                            rounded-full shadow-lg z-10">
-                                Lead
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Bottom: Name & Role */}
-                <div className="text-center pb-8 px-6">
-                    <h3 className="text-[#E62B1E] font-black text-xl md:text-2xl uppercase tracking-wide mb-1.5">
-                        {member.name}
-                    </h3>
-                    <p className="text-white/90 text-sm uppercase tracking-[0.15em] font-semibold">
-                        {member.role}
-                    </p>
-                </div>
-            </GlareCard>
+            {/* Text content - Also clickable with enhanced hover states */}
+            <Link to={`/team/${id}`} className="mt-4 text-center block group/text">
+                <h3 
+                    className={`
+                        text-base font-bold text-white uppercase tracking-wider leading-tight 
+                        transition-all duration-300
+                        group-hover:text-[#E62B1E] group-hover/text:text-[#E62B1E]
+                        ${isActive ? 'text-[#E62B1E]' : ''}
+                    `}
+                >
+                    {name}
+                </h3>
+                <p 
+                    className={`
+                        text-white/40 text-sm mt-1.5 leading-snug
+                        transition-all duration-300
+                        group-hover:text-white/60
+                        ${isActive ? 'text-white/60' : ''}
+                    `}
+                >
+                    {role}
+                </p>
+            </Link>
         </motion.div>
     );
 };
 
+// ════════════════════════════════════════════════════════════════════════════
 // Main Team Component
+// ════════════════════════════════════════════════════════════════════════════
+
 const Team: React.FC = () => {
+    const prefersReducedMotion = useReducedMotion();
+    
+    // Section entrance animation variants
+    const headerVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: prefersReducedMotion ? 0.1 : 0.6,
+                ease: [0.25, 0.46, 0.45, 0.94],
+            },
+        },
+    };
+
+    const categoryHeaderVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: prefersReducedMotion ? 0.1 : 0.5,
+                ease: [0.25, 0.46, 0.45, 0.94],
+            },
+        },
+    };
+
     return (
-        <section id="team" className="relative py-24 md:py-36 overflow-hidden bg-[#0A0A0A]">
-            {/* Ambient background effects */}
-            <div className="absolute inset-0 pointer-events-none">
-                {/* Gradient orbs */}
-                <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#E62B1E]/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#E62B1E]/8 rounded-full blur-[120px]" />
+        <section id="team" className="py-24 md:py-32 lg:py-40 bg-[#0A0A0A] overflow-hidden">
+            <div className="container mx-auto px-6 md:px-8 lg:px-12">
 
-                {/* Dot grid pattern */}
-                <div
-                    className="absolute inset-0 opacity-20"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
-                        backgroundSize: '40px 40px'
-                    }}
-                />
-            </div>
-
-            <div className="container mx-auto px-4 md:px-6 relative z-10">
-                {/* Section Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="text-center mb-20 md:mb-28"
+                {/* Page Header */}
+                <motion.header
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={headerVariants}
+                    className="text-center mb-20 md:mb-28 lg:mb-32"
                 >
-                    <motion.span
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="inline-block px-4 py-2 mb-6 text-xs font-bold uppercase tracking-[0.2em]
-                                   text-[#E62B1E] bg-[#E62B1E]/10 rounded-full border border-[#E62B1E]/20"
+                    {/* Badge with subtle pulse */}
+                    <motion.div 
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-full mb-6"
+                        whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
                     >
-                        The People Behind
-                    </motion.span>
+                        <motion.span 
+                            className="text-[#E62B1E] font-bold"
+                            animate={prefersReducedMotion ? {} : { 
+                                opacity: [1, 0.5, 1],
+                            }}
+                            transition={{ 
+                                duration: 2, 
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                            }}
+                        >
+                            ●
+                        </motion.span>
+                        <span className="text-white/60 text-sm font-medium tracking-wide">TEDxSRKR 2026</span>
+                    </motion.div>
 
-                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 
-                                   tracking-tight leading-[1.1]">
-                        Meet Our{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E62B1E] to-[#ff6b5e]">
-                            Core Team
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
+                        Meet The{' '}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E62B1E] to-[#ff4d4d]">
+                            Team
                         </span>
-                    </h2>
-
-                    <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                        Behind every great idea is a team that makes it happen.
-                        <br className="hidden md:block" />
-                        Meet the passionate minds driving TEDxSRKR 2026 forward.
+                    </h1>
+                    <p className="mt-6 text-white/40 text-lg max-w-2xl mx-auto">
+                        The passionate individuals working behind the scenes to bring ideas worth spreading to life.
                     </p>
-                </motion.div>
+                </motion.header>
 
                 {/* Team Categories */}
-                {TEAM_CATEGORIES.map((category, categoryIndex) => (
-                    <div key={category.id} className="mb-24 md:mb-32 last:mb-0">
-                        {/* Category Header */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: categoryIndex * 0.1 }}
-                            className="flex flex-col md:flex-row md:items-center gap-5 md:gap-8 mb-12 md:mb-16"
-                        >
-                            {/* Category Icon */}
-                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl
-                                            bg-gradient-to-br from-[#E62B1E] to-[#ff4436]
-                                            shadow-[0_8px_30px_rgba(230,43,30,0.4)]">
-                                {category.icon}
-                            </div>
+                <div className="space-y-24 md:space-y-32 lg:space-y-40">
+                    {TEAM_CATEGORIES.map((category, catIndex) => {
+                        const memberCount = category.members.length;
 
-                            {/* Category Info */}
-                            <div className="flex-1">
-                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                                    {category.name}
-                                </h3>
-                                <p className="text-gray-500 text-sm md:text-base max-w-xl">
-                                    {category.description}
-                                </p>
-                            </div>
+                        return (
+                            <section key={category.id} aria-labelledby={`category-${category.id}`}>
+                                {/* Category Header with slide-in animation */}
+                                <motion.div
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    variants={categoryHeaderVariants}
+                                    className="mb-10 md:mb-14"
+                                >
+                                    <div className="flex items-center gap-4 mb-3">
+                                        <h2
+                                            id={`category-${category.id}`}
+                                            className="text-2xl md:text-3xl font-bold text-white tracking-tight"
+                                        >
+                                            {category.name}
+                                        </h2>
+                                        <motion.div 
+                                            className="hidden md:block h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"
+                                            initial={{ scaleX: 0, originX: 0 }}
+                                            whileInView={{ scaleX: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ 
+                                                duration: prefersReducedMotion ? 0.1 : 0.8, 
+                                                delay: 0.2,
+                                                ease: [0.25, 0.46, 0.45, 0.94],
+                                            }}
+                                        />
+                                        <motion.span 
+                                            className="text-white/20 text-sm font-medium"
+                                            initial={{ opacity: 0 }}
+                                            whileInView={{ opacity: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: 0.4 }}
+                                        >
+                                            {memberCount} {memberCount === 1 ? 'member' : 'members'}
+                                        </motion.span>
+                                    </div>
+                                    {category.description && (
+                                        <p className="text-white/40 text-sm md:text-base max-w-xl">
+                                            {category.description}
+                                        </p>
+                                    )}
+                                </motion.div>
 
-                            {/* Decorative line */}
-                            <div className="hidden lg:block flex-1 h-px bg-gradient-to-r from-[#E62B1E]/30 to-transparent" />
-                        </motion.div>
+                                {/* 
+                                    Grid System with staggered entrance:
+                                    - Uses CSS Grid with auto-fit for responsive columns
+                                    - minmax ensures minimum card width of 200px
+                                    - justify-center centers orphan cards
+                                    - max-width constrains grid width for small member counts
+                                */}
+                                <motion.div
+                                    className="grid gap-6 md:gap-8 justify-center"
+                                    style={{
+                                        gridTemplateColumns: `repeat(auto-fit, minmax(200px, 1fr))`,
+                                        maxWidth: memberCount <= 2 ? '500px' : memberCount <= 3 ? '750px' : '100%',
+                                        margin: memberCount <= 3 ? '0 auto' : undefined,
+                                    }}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    variants={sectionVariants}
+                                >
+                                    {category.members.map((member, index) => (
+                                        <MemberCard
+                                            key={member.id}
+                                            id={member.id}
+                                            name={member.name}
+                                            role={member.role}
+                                            image={member.image}
+                                            linkedin={member.linkedin}
+                                            instagram={member.instagram}
+                                            isOpenPosition={member.isOpenPosition}
+                                            index={index}
+                                        />
+                                    ))}
+                                </motion.div>
+                            </section>
+                        );
+                    })}
+                </div>
 
-                        {/* Team Grid */}
-                        <div className={`grid gap-6 md:gap-8 ${category.featured
-                                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto'
-                                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                            }`}>
-                            {category.members.map((member, memberIndex) => (
-                                <GlassTeamCard
-                                    key={member.id}
-                                    member={member}
-                                    category={category}
-                                    index={memberIndex}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                ))}
-
-                {/* Join the Team CTA */}
+                {/* Join CTA with enhanced hover state */}
                 <motion.div
-                    initial={{ opacity: 0, y: 40 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="relative mt-20 md:mt-32 text-center"
+                    transition={{ duration: prefersReducedMotion ? 0.1 : 0.6 }}
+                    className="mt-28 md:mt-36 lg:mt-44 text-center"
                 >
-                    {/* Glass card for CTA */}
-                    <div
-                        className="relative max-w-2xl mx-auto rounded-3xl p-10 md:p-14 overflow-hidden"
-                        style={{
-                            background: 'rgba(18, 18, 18, 0.5)',
-                            backdropFilter: 'blur(20px)',
-                            WebkitBackdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                    <motion.div 
+                        className="max-w-xl mx-auto p-8 md:p-12 rounded-3xl bg-white/[0.02] border border-white/[0.06] transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.03]"
+                        whileHover={prefersReducedMotion ? {} : { 
+                            y: -4,
+                            boxShadow: '0 20px 40px -12px rgba(230, 43, 30, 0.15)',
                         }}
                     >
-                        {/* Background glow */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#E62B1E]/10 via-transparent to-[#E62B1E]/5" />
-
-                        <div className="relative z-10">
-                            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                                Want to Join <span className="text-[#E62B1E]">TEDxSRKR</span>?
-                            </h3>
-                            <p className="text-gray-400 mb-8 text-lg">
-                                We're always looking for passionate individuals to help bring
-                                ideas worth spreading to life.
-                            </p>
-
-                            <motion.a
-                                href="mailto:team@tedxsrkr.com"
-                                whileHover={{ scale: 1.05, y: -2 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="inline-flex items-center gap-3 px-8 py-4 bg-[#E62B1E] text-white 
-                                           font-bold text-lg rounded-full 
-                                           shadow-[0_8px_40px_rgba(230,43,30,0.5)]
-                                           hover:shadow-[0_12px_50px_rgba(230,43,30,0.6)]
-                                           transition-shadow duration-300"
-                            >
-                                <Mail size={20} />
-                                Get in Touch
-                                <ExternalLink size={16} className="opacity-60" />
-                            </motion.a>
-                        </div>
-                    </div>
+                        <motion.div 
+                            className="w-12 h-12 rounded-full bg-[#E62B1E]/10 flex items-center justify-center mx-auto mb-6"
+                            whileHover={prefersReducedMotion ? {} : { scale: 1.1, rotate: 5 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                        >
+                            <Mail className="w-5 h-5 text-[#E62B1E]" />
+                        </motion.div>
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                            Want to Join Us?
+                        </h3>
+                        <p className="text-white/40 mb-8">
+                            We're always looking for passionate individuals to help bring ideas worth spreading to life.
+                        </p>
+                        <motion.a
+                            href="mailto:team@tedxsrkr.com"
+                            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#E62B1E] text-white font-semibold rounded-full hover:bg-[#cc2019] transition-colors focus:outline-none focus:ring-2 focus:ring-[#E62B1E] focus:ring-offset-2 focus:ring-offset-[#0A0A0A]"
+                            whileHover={prefersReducedMotion ? {} : { scale: 1.03 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            Get in Touch
+                        </motion.a>
+                    </motion.div>
                 </motion.div>
             </div>
         </section>
