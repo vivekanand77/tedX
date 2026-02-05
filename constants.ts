@@ -13,6 +13,7 @@ import { Mic, Coffee, Award, Users, Milestone, Calendar } from 'lucide-react';
  */
 export const ALLOWED_ADMIN_EMAILS: string[] = [
     'chandanivivek770@gmail.com',
+    'aakash.srisai@gmail.com',
     // Add more authorized admin emails below:
     // 'another.admin@gmail.com',
     // 'organizer@gmail.com',
