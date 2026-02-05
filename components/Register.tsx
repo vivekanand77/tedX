@@ -393,7 +393,7 @@ const Register: React.FC = () => {
                                 {/* Phone Field */}
                                 <div>
                                     <label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">
-                                        Phone Number <span className="text-gray-600">(optional)</span>
+                                        Phone Number
                                     </label>
                                     <input
                                         type="tel"
@@ -419,18 +419,18 @@ const Register: React.FC = () => {
                                     </AnimatePresence>
                                 </div>
 
-                                {/* College Field */}
+                                {/* College Field - Fixed */}
                                 <div>
                                     <label htmlFor="college" className="block text-sm font-medium text-gray-400 mb-2">
-                                        College / Institution <span className="text-gray-600">(optional)</span>
+                                        College / Institution
                                     </label>
                                     <input
                                         type="text"
                                         id="college"
-                                        value={formData.college}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        className={inputClasses('college')}
+                                        value="SRKR Engineering College"
+                                        readOnly
+                                        disabled
+                                        className="w-full bg-[#1a1a1a]/50 border border-gray-700 rounded-xl px-4 py-3.5 text-gray-400 cursor-not-allowed"
                                     />
                                 </div>
                             </div>
@@ -439,7 +439,7 @@ const Register: React.FC = () => {
                                 {/* Year Field */}
                                 <div>
                                     <label htmlFor="year" className="block text-sm font-medium text-gray-400 mb-2">
-                                        Year <span className="text-gray-600">(optional)</span>
+                                        Year
                                     </label>
                                     <select
                                         id="year"
@@ -461,7 +461,7 @@ const Register: React.FC = () => {
                                 {/* Department/Branch Field */}
                                 <div>
                                     <label htmlFor="department" className="block text-sm font-medium text-gray-400 mb-2">
-                                        Branch <span className="text-gray-600">(optional)</span>
+                                        Branch
                                     </label>
                                     <select
                                         id="department"

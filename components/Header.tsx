@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Shield, LogOut, LayoutDashboard } from 'lucide-react';
+import { useAdminAuth } from '../contexts/AdminAuthContext';
 
 const Header: React.FC = () => {
     const [scrolled, setScrolled] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
     const location = useLocation();
     const activeSection = location.pathname === '/' ? 'home' : location.pathname.substring(1);
+    
+    // Get admin auth state (safely handles when context is not available)
+    const adminAuth = useAdminAuth();
+    const isAdminLoggedIn = adminAuth?.isAuthenticated ?? false;
+    const adminUser = adminAuth?.adminUser;
+    const handleLogout = adminAuth?.logout;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,6 +31,7 @@ const Header: React.FC = () => {
     // Close mobile menu on route change
     useEffect(() => {
         setMobileMenuOpen(false);
+        setAdminDropdownOpen(false);
     }, [location.pathname]);
 
     // Prevent body scroll when mobile menu is open
@@ -112,19 +121,88 @@ const Header: React.FC = () => {
                         })}
                     </nav>
 
-                    {/* Desktop CTA Button */}
-                    <motion.div
-                        className="hidden md:block"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <Link
-                            to="/register"
-                            className="inline-flex items-center justify-center gap-2 h-10 px-6 bg-[#E62B1E] text-white font-bold text-sm rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(230,43,30,0.5)] hover:bg-[#cc2020]"
+                    {/* Desktop CTA Buttons */}
+                    <div className="hidden md:flex items-center gap-3">
+                        {/* Admin Login/Dashboard Button */}
+                        {isAdminLoggedIn ? (
+                            <div className="relative">
+                                <motion.button
+                                    onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
+                                    className="inline-flex items-center justify-center gap-2 h-10 px-4 border border-white/20 text-white/80 font-medium text-sm rounded-full transition-all duration-300 hover:border-white/40 hover:text-white hover:bg-white/5"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    aria-label="Admin menu"
+                                    aria-expanded={adminDropdownOpen}
+                                >
+                                    <LayoutDashboard size={16} />
+                                    <span className="hidden lg:inline">{adminUser?.name || 'Admin'}</span>
+                                </motion.button>
+                                
+                                {/* Admin Dropdown */}
+                                <AnimatePresence>
+                                    {adminDropdownOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                                            transition={{ duration: 0.15 }}
+                                            className="absolute right-0 top-full mt-2 w-48 bg-[#111] border border-white/10 rounded-xl shadow-xl overflow-hidden z-50"
+                                        >
+                                            <div className="px-4 py-3 border-b border-white/10">
+                                                <p className="text-sm font-medium text-white truncate">{adminUser?.name}</p>
+                                                <p className="text-xs text-white/50 capitalize">{adminUser?.role}</p>
+                                            </div>
+                                            <Link
+                                                to="/admin"
+                                                onClick={() => setAdminDropdownOpen(false)}
+                                                className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                                            >
+                                                <LayoutDashboard size={16} />
+                                                Dashboard
+                                            </Link>
+                                            <button
+                                                onClick={() => {
+                                                    setAdminDropdownOpen(false);
+                                                    handleLogout?.();
+                                                }}
+                                                className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                                            >
+                                                <LogOut size={16} />
+                                                Logout
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Link
+                                    to="/admin/login"
+                                    className="inline-flex items-center justify-center gap-2 h-10 px-4 border border-white/20 text-white/70 font-medium text-sm rounded-full transition-all duration-300 hover:border-white/40 hover:text-white hover:bg-white/5"
+                                    aria-label="Admin login"
+                                >
+                                    <Shield size={16} />
+                                    <span className="hidden lg:inline">Admin</span>
+                                </Link>
+                            </motion.div>
+                        )}
+
+                        {/* Get Tickets Button */}
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.98 }}
                         >
-                            Get Tickets
-                        </Link>
-                    </motion.div>
+                            <Link
+                                to="/register"
+                                className="inline-flex items-center justify-center gap-2 h-10 px-6 bg-[#E62B1E] text-white font-bold text-sm rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(230,43,30,0.5)] hover:bg-[#cc2020]"
+                            >
+                                Get Tickets
+                            </Link>
+                        </motion.div>
+                    </div>
 
                     {/* Mobile Menu Button */}
                     <button
@@ -189,7 +267,7 @@ const Header: React.FC = () => {
 
                             {/* Mobile CTA */}
                             <motion.div
-                                className="mt-8"
+                                className="mt-8 space-y-3"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
@@ -201,6 +279,39 @@ const Header: React.FC = () => {
                                 >
                                     Get Tickets
                                 </Link>
+                                
+                                {/* Admin Button in Mobile */}
+                                {isAdminLoggedIn ? (
+                                    <>
+                                        <Link
+                                            to="/admin"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="flex items-center justify-center gap-2 w-full py-3 border border-white/20 text-white/80 font-medium rounded-xl transition-all hover:border-white/40 hover:bg-white/5"
+                                        >
+                                            <LayoutDashboard size={18} />
+                                            Dashboard
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                setMobileMenuOpen(false);
+                                                handleLogout?.();
+                                            }}
+                                            className="flex items-center justify-center gap-2 w-full py-3 border border-red-500/30 text-red-400 font-medium rounded-xl transition-all hover:border-red-500/50 hover:bg-red-500/10"
+                                        >
+                                            <LogOut size={18} />
+                                            Logout
+                                        </button>
+                                    </>
+                                ) : (
+                                    <Link
+                                        to="/admin/login"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center justify-center gap-2 w-full py-3 border border-white/20 text-white/70 font-medium rounded-xl transition-all hover:border-white/40 hover:bg-white/5"
+                                    >
+                                        <Shield size={18} />
+                                        Admin Login
+                                    </Link>
+                                )}
                             </motion.div>
                         </motion.nav>
                     </motion.div>

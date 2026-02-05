@@ -2,11 +2,71 @@
 import { Speaker, ScheduleItem, TeamCategory, Stat } from './types';
 import { Mic, Coffee, Award, Users, Milestone, Calendar } from 'lucide-react';
 
+// ============================================
+// Admin Access Control
+// ============================================
+
+/**
+ * Whitelist of Gmail addresses allowed to access the admin dashboard.
+ * Only these emails can log in to /admin.
+ * Add new admins by adding their Gmail to this array.
+ */
+export const ALLOWED_ADMIN_EMAILS: string[] = [
+    'chandanivivek770@gmail.com',
+    // Add more authorized admin emails below:
+    // 'another.admin@gmail.com',
+    // 'organizer@gmail.com',
+];
+
 export const SPEAKERS: Speaker[] = [
-    { name: 'Dr. Priya Sharma', title: 'AI Research Scientist', topic: '"The Future of AI in Healthcare"', image: 'https://picsum.photos/seed/priya/400/400' },
-    { name: 'Rajesh Kumar', title: 'Social Entrepreneur', topic: '"Building Bridges: Technology for Rural India"', image: 'https://picsum.photos/seed/rajesh/400/400' },
-    { name: 'Ananya Reddy', title: 'Climate Activist', topic: '"Youth Leading the Climate Revolution"', image: 'https://picsum.photos/seed/ananya/400/400' },
-    { name: 'Dr. Vikram Patel', title: 'Neuroscientist', topic: '"Unlocking the Secrets of the Mind"', image: 'https://picsum.photos/seed/vikram/400/400' },
+    { 
+        id: 'priya-sharma',
+        name: 'Dr. Priya Sharma', 
+        title: 'AI Research Scientist', 
+        topic: 'The Future of AI in Healthcare', 
+        image: 'https://picsum.photos/seed/priya/400/400',
+        bio: 'Dr. Priya Sharma is a leading AI researcher with over 15 years of experience in developing machine learning solutions for healthcare. She has published 50+ papers and holds patents in medical imaging AI.',
+        talkDescription: 'In this groundbreaking talk, Dr. Sharma explores how artificial intelligence is revolutionizing healthcare—from early disease detection to personalized treatment plans. She shares real cases where AI has saved lives and discusses the ethical considerations we must address.',
+        linkedin: 'https://linkedin.com/in/',
+        instagram: 'https://instagram.com/',
+        expertise: ['Artificial Intelligence', 'Healthcare', 'Machine Learning']
+    },
+    { 
+        id: 'rajesh-kumar',
+        name: 'Rajesh Kumar', 
+        title: 'Social Entrepreneur', 
+        topic: 'Building Bridges: Technology for Rural India', 
+        image: 'https://picsum.photos/seed/rajesh/400/400',
+        bio: 'Rajesh Kumar is a social entrepreneur who has connected over 500 villages to the digital world. His organization has empowered 100,000+ rural citizens with technology access and digital literacy.',
+        talkDescription: 'Rajesh shares his decade-long journey of bringing technology to India\'s most remote villages. From solar-powered internet hubs to mobile learning centers, discover how simple innovations are transforming rural livelihoods.',
+        linkedin: 'https://linkedin.com/in/',
+        instagram: 'https://instagram.com/',
+        expertise: ['Social Entrepreneurship', 'Rural Development', 'Digital Inclusion']
+    },
+    { 
+        id: 'ananya-reddy',
+        name: 'Ananya Reddy', 
+        title: 'Climate Activist', 
+        topic: 'Youth Leading the Climate Revolution', 
+        image: 'https://picsum.photos/seed/ananya/400/400',
+        bio: 'At just 22, Ananya Reddy has organized climate strikes across 50 cities and influenced policy changes at state and national levels. She founded Youth for Earth, a movement with 200,000 members.',
+        talkDescription: 'Ananya delivers a powerful call to action, showcasing how young people are not waiting for permission to save the planet. She presents actionable strategies and proves that age is no barrier to creating massive change.',
+        linkedin: 'https://linkedin.com/in/',
+        instagram: 'https://instagram.com/',
+        expertise: ['Climate Action', 'Youth Leadership', 'Environmental Policy']
+    },
+    { 
+        id: 'vikram-patel',
+        name: 'Dr. Vikram Patel', 
+        title: 'Neuroscientist', 
+        topic: 'Unlocking the Secrets of the Mind', 
+        image: 'https://picsum.photos/seed/vikram/400/400',
+        bio: 'Dr. Vikram Patel is a world-renowned neuroscientist whose research on consciousness and memory has been featured in Nature and Science. He leads the Brain Research Institute and has won numerous international awards.',
+        talkDescription: 'Journey into the most complex structure in the known universe—the human brain. Dr. Patel reveals the latest discoveries about consciousness, memory formation, and what makes us uniquely human.',
+        linkedin: 'https://linkedin.com/in/',
+        instagram: 'https://instagram.com/',
+        expertise: ['Neuroscience', 'Consciousness', 'Brain Research']
+    },
 ];
 
 export const SCHEDULE: ScheduleItem[] = [

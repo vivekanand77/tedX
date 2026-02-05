@@ -50,7 +50,7 @@ const cardVariants = {
         transition: {
             duration: 0.5,
             delay: i * 0.06,
-            ease: [0.25, 0.46, 0.45, 0.94],
+            ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
         },
     }),
 };
@@ -290,7 +290,7 @@ const Team: React.FC = () => {
             y: 0,
             transition: {
                 duration: prefersReducedMotion ? 0.1 : 0.6,
-                ease: [0.25, 0.46, 0.45, 0.94],
+                ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
             },
         },
     };
@@ -302,7 +302,7 @@ const Team: React.FC = () => {
             x: 0,
             transition: {
                 duration: prefersReducedMotion ? 0.1 : 0.5,
-                ease: [0.25, 0.46, 0.45, 0.94],
+                ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
             },
         },
     };

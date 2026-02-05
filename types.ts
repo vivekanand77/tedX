@@ -2,10 +2,17 @@
 import { LucideIcon } from 'lucide-react';
 
 export interface Speaker {
+    id: string;
     name: string;
     title: string;
     topic: string;
     image: string;
+    bio?: string;
+    talkDescription?: string;
+    linkedin?: string;
+    instagram?: string;
+    twitter?: string;
+    expertise?: string[];
 }
 
 export interface ScheduleItem {

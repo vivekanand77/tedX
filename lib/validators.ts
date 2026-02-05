@@ -14,6 +14,7 @@
  */
 
 import { z } from 'zod';
+import { ALLOWED_ADMIN_EMAILS } from '../constants';
 
 // ============================================
 // Constants
@@ -24,6 +25,31 @@ const MAX_EMAIL_LENGTH = 254; // RFC 5321
 const MAX_PHONE_LENGTH = 20;
 const MAX_COLLEGE_LENGTH = 200;
 const MAX_DEPARTMENT_LENGTH = 100;
+
+// ============================================
+// Admin Email Validation
+// ============================================
+
+/**
+ * Check if an email is in the allowed admin whitelist
+ * @param email - The email to check
+ * @returns true if the email is authorized for admin access
+ */
+export function isAllowedAdminEmail(email: string): boolean {
+    const normalizedEmail = email.toLowerCase().trim();
+    return ALLOWED_ADMIN_EMAILS.some(
+        (allowedEmail) => allowedEmail.toLowerCase().trim() === normalizedEmail
+    );
+}
+
+/**
+ * Check if an email is a Gmail address
+ * @param email - The email to check
+ * @returns true if the email is a Gmail address
+ */
+export function isGmailAddress(email: string): boolean {
+    return email.toLowerCase().trim().endsWith('@gmail.com');
+}
 
 // ============================================
 // Registration Schema
@@ -71,9 +97,7 @@ export const registrationSchema = z.object({
         .or(z.literal('')),
 
     ticketType: z
-        .enum(['standard', 'vip', 'student'], {
-            errorMap: () => ({ message: 'Invalid ticket type' }),
-        })
+        .enum(['standard', 'vip', 'student'])
         .default('standard'),
 });
 
@@ -106,7 +130,7 @@ export function validateRegistration(
     }
 
     // Extract user-friendly error messages
-    const errors = result.error.errors.map((err) => {
+    const errors = result.error.issues.map((err) => {
         const field = err.path.join('.');
         return field ? `${field}: ${err.message}` : err.message;
     });
